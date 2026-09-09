@@ -1,0 +1,7 @@
+source_field,target_field,data_type,required,pii_class,transform,notes
+cust_id,customer_id,integer,true,none,cast_int,business key
+name,customer_name,string,true,internal,trim,
+email,email,string,false,pii,mask_email,
+country,country_code,string,true,none,upper;lookup:country_codes,ISO-3166 alpha-2
+balance,balance_amount,decimal(18_2),true,confidential,,control-total column
+updated_at,source_updated_at,timestamp,true,none,to_utc,watermark

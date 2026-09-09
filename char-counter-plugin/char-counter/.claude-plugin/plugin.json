@@ -1,0 +1,10 @@
+{
+  "name": "char-counter",
+  "version": "2.0.0",
+  "description": "A tour of every plugin part: a slash command counts characters in a name, an agent writes a 5-sentence story about it, skills do name numerology and acrostics, a hook announces itself at session start, and an MCP server runs a live web search for the name.",
+  "author": {
+    "name": "Suman",
+    "email": "suman.ju06@gmail.com"
+  },
+  "keywords": ["name", "characters", "story", "numerology", "web-search", "example"]
+}

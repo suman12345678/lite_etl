@@ -1,0 +1,41 @@
+"""TEMPLATE -- copy to `bigquery_source.py`, then register it.
+
+In scripts/etl/extractors/__init__.py add:
+
+    from .bigquery_source import BigQueryExtractor
+    register("bigquery", BigQueryExtractor)
+
+sources.json entry:
+
+    {
+      "name": "sales_bq",
+      "type": "bigquery",
+      "enabled": true,
+      "connection": {
+        "project": "my-gcp-project",
+        "query": "SELECT * FROM `my.dataset.sales` WHERE _PARTITIONDATE = CURRENT_DATE()"
+      },
+      "extract": { "mode": "incremental", "watermark_column": "updated_at" },
+      "business_rules": ["trim_whitespace"],
+      "reconciliation": { "control_total_column": "amount", "key_columns": ["sale_id"] }
+    }
+
+Auth: Application Default Credentials, or a service account via
+GOOGLE_APPLICATION_CREDENTIALS. Never put keys in sources.json.
+Dependency: add `google-cloud-bigquery` to scripts/requirements.txt.
+"""
+from __future__ import annotations
+
+from .base import Extractor
+
+
+class BigQueryExtractor(Extractor):
+    type_name = "bigquery"
+
+    def extract(self) -> list[dict]:
+        from google.cloud import bigquery  # third-party; see requirements.txt
+
+        conn = self.source.connection
+        client = bigquery.Client(project=conn.get("project"))
+        job = client.query(conn["query"])
+        return [dict(row.items()) for row in job.result()]

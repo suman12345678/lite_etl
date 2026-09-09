@@ -1,0 +1,4 @@
+customer_id,name,email,country,balance,updated_at
+1001,  Ada Lovelace ,ada@example.com,gb,1520.50,2026-01-05T10:00:00Z
+1002,Grace Hopper,grace@example.com,us,880.00,2026-01-05T10:05:00Z
+,Anon,anon@example.com,us,300.00,2026-01-05T10:06:00Z

@@ -1,0 +1,18 @@
+# local Claude Code settings overrides
+.claude/settings.local.json
+
+# harness-local pointer to the active project (machine-specific)
+state/active-workspace
+
+# scratch / editor
+*.swp
+.DS_Store
+Thumbs.db
+
+# python
+__pycache__/
+*.pyc
+
+# NOTE: projects/<name>/ IS tracked - those are the artifacts this harness
+# produces. A project you create in a folder outside the harness is yours to
+# version-control separately.

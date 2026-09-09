@@ -1,0 +1,58 @@
+{
+  "project_name": "Northwind Commerce - Unified Retail Analytics Harness (DEMO)",
+  "workspace_path": "projects/sample_project_2",
+  "created": "2026-09-09",
+  "updated": "2026-09-09",
+  "active_phase": "3_build_and_test",
+  "phases": {
+    "1_requirements": {
+      "status": "complete",
+      "owner_skill": "gather-etl-requirements",
+      "deliverables": [
+        "00-project-brief.md",
+        "01-source-systems.md",
+        "02-targets-and-loading.md",
+        "03-transformations.md",
+        "04-data-quality.md",
+        "05-reconciliation.md",
+        "06-lineage-and-governance.md",
+        "07-scheduling-and-orchestration.md",
+        "08-security-and-compliance.md",
+        "09-non-functional.md",
+        "10-platform-and-deployment.md",
+        "README.md",
+        "99-open-questions.md"
+      ],
+      "open_questions_count": 5,
+      "notes": "Interview held 2026-09-09. Intake doc: northwind-commerce-discovery.md. 6 sources, Databricks lakehouse target. 5 open questions, 2 resolved same day via /finalize-requirements (GA4 via extract job; gold_pii same catalog)."
+    },
+    "2_architecture": {
+      "status": "complete",
+      "owner_skill": "design-etl-architecture",
+      "deliverables": [
+        "architecture-overview.md",
+        "architecture-diagram.md",
+        "data-flow-diagram.md",
+        "data-entity-diagram.md",
+        "component-design.md",
+        "transformation-design.md",
+        "deployment-and-iac.md",
+        "pipeline-blueprint.md",
+        "design-decisions.md",
+        "traceability-matrix.md",
+        "README.md"
+      ],
+      "notes": "Design produced 2026-09-09. ELT on Databricks (bronze/silver/gold Delta), dbt Core + dbt-databricks, Terraform (databricks/aws/google providers), Dagster orchestration, GitHub Actions CI/CD with plan/apply + dbt build + manual promotion. Hard reconciliation gate as a Dagster asset check. 3 open design decisions carried into build."
+    },
+    "3_build_and_test": { "status": "planned", "notes": "Not built by this harness yet - would be Phase 3: scaffold extractors + the dbt project + tests." },
+    "4_pipeline_and_git": { "status": "planned" },
+    "5_full_testing_and_hardening": { "status": "planned" }
+  },
+  "history": [
+    { "date": "2026-09-09", "phase": "0", "event": "/etl-new-project sample_project_2 - workspace scaffolded" },
+    { "date": "2026-09-09", "phase": "1_requirements", "event": "intake doc dropped: northwind-commerce-discovery.md" },
+    { "date": "2026-09-09", "phase": "1_requirements", "event": "/gather-requirements - interview across 11 areas, 13 files written, 5 open questions" },
+    { "date": "2026-09-09", "phase": "1_requirements", "event": "/finalize-requirements - Q1 and Q5 answered, files refreshed (00, 08, 10, 99 to v1.1)" },
+    { "date": "2026-09-09", "phase": "2_architecture", "event": "/design-architecture - 11 design files written incl. 4 mermaid diagrams, transformation-design.md and deployment-and-iac.md" }
+  ]
+}

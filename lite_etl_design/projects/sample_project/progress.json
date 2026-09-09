@@ -1,0 +1,55 @@
+{
+  "project_name": "Meridian Trust - Regulatory & Risk Data Harness (DEMO)",
+  "workspace_path": "projects/sample_project",
+  "created": "2026-09-03",
+  "updated": "2026-09-03",
+  "active_phase": "3_build_and_test",
+  "phases": {
+    "1_requirements": {
+      "status": "complete",
+      "owner_skill": "gather-etl-requirements",
+      "deliverables": [
+        "00-project-brief.md",
+        "01-source-systems.md",
+        "02-targets-and-loading.md",
+        "03-transformations.md",
+        "04-data-quality.md",
+        "05-reconciliation.md",
+        "06-lineage-and-governance.md",
+        "07-scheduling-and-orchestration.md",
+        "08-security-and-compliance.md",
+        "09-non-functional.md",
+        "README.md",
+        "99-open-questions.md"
+      ],
+      "open_questions_count": 5,
+      "notes": "Interview held 2026-09-03. Intake doc: meridian-trust-rfp-extract.md. 5 open questions, 2 resolved same day via /finalize-requirements."
+    },
+    "2_architecture": {
+      "status": "complete",
+      "owner_skill": "design-etl-architecture",
+      "deliverables": [
+        "architecture-overview.md",
+        "architecture-diagram.md",
+        "data-flow-diagram.md",
+        "data-entity-diagram.md",
+        "component-design.md",
+        "pipeline-blueprint.md",
+        "design-decisions.md",
+        "traceability-matrix.md",
+        "README.md"
+      ],
+      "notes": "Design produced 2026-09-03. ELT/ETL split, Snowflake 3-zone model, Airflow. 3 open design decisions carried into build."
+    },
+    "3_build_and_test": { "status": "planned", "notes": "Not built by this harness yet - would be Phase 3." },
+    "4_pipeline_and_git": { "status": "planned" },
+    "5_full_testing_and_hardening": { "status": "planned" }
+  },
+  "history": [
+    { "date": "2026-09-03", "phase": "0", "event": "/etl-new-project sample_project - workspace scaffolded" },
+    { "date": "2026-09-03", "phase": "1_requirements", "event": "intake doc dropped: meridian-trust-rfp-extract.md" },
+    { "date": "2026-09-03", "phase": "1_requirements", "event": "/gather-requirements - interview across 10 areas, 12 files written, 5 open questions" },
+    { "date": "2026-09-03", "phase": "1_requirements", "event": "/finalize-requirements - Q2 and Q4 answered, files refreshed" },
+    { "date": "2026-09-03", "phase": "2_architecture", "event": "/design-architecture - 9 design files written incl. 3 mermaid diagrams" }
+  ]
+}

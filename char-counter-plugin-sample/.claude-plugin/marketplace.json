@@ -1,0 +1,14 @@
+{
+  "name": "char-counter-marketplace",
+  "owner": {
+    "name": "Suman",
+    "email": "suman.ju06@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "char-counter",
+      "source": "./char-counter",
+      "description": "A guided tour of every plugin part: commands (count characters, tell a story), an agent (5-sentence name story), skills (numerology, acrostic), a SessionStart hook, an MCP server (live web search for a name), and the Python scripts behind them."
+    }
+  ]
+}

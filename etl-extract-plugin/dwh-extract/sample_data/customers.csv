@@ -1,0 +1,9 @@
+cust_id,name,email,country,balance,signup_date
+1001,  Ada Lovelace ,ada@example.com,uk,1520.50,2021-03-11
+1002,Grace Hopper,grace@example.com,us, 880.00,2020-07-01
+1003, Alan Turing,alan@example.com,uk,-45.20,2019-11-23
+1004,Katherine Johnson,katherine@example.com,us,10250.75,2022-01-15
+,Anonymous User,anon@example.com,us,300.00,2023-05-05
+1006,Edsger Dijkstra ,edsger@example.com,nl,0.00,2018-09-30
+1007,Barbara Liskov,barbara@example.com,us,2999.99,2021-12-12
+1008, Radia Perlman,radia@example.com,us,4120.10,2020-02-29

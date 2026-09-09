@@ -1,0 +1,14 @@
+{
+  "name": "etl-extract-marketplace",
+  "owner": {
+    "name": "Suman",
+    "email": "suman.ju06@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "dwh-extract",
+      "source": "./dwh-extract",
+      "description": "A minimal, extensible ETL extraction stage for a data-warehouse landing zone: extract a source (local CSV to start), apply row-level business rules, land partitioned files, write a run manifest, and reconcile the landed data back to the source. Includes a CLI, an MCP server, an agent, skills, and a hook."
+    }
+  ]
+}

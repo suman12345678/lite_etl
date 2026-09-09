@@ -1,0 +1,8 @@
+{
+  "name": "Meridian Trust - Regulatory & Risk Data Harness (DEMO)",
+  "created": "2026-09-03",
+  "harness_path": "C:/Users/sahaa/suman_on_computer/claude/lite_etl_design",
+  "harness_version": "0.1",
+  "demo": true,
+  "note": "Fictional client and requirements. Built end-to-end with the lite-etl-design harness to show how it is used. See README.md."
+}

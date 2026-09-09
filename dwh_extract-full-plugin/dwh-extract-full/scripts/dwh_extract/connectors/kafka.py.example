@@ -1,0 +1,4 @@
+"""TEMPLATE: Kafka / event-stream connector (bounded pull)
+
+SCAFFOLD ONLY - not implemented yet. See README.md and docs/.
+"""

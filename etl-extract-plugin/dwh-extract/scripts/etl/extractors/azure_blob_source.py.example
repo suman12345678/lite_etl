@@ -1,0 +1,55 @@
+"""TEMPLATE -- copy to `azure_blob_source.py`, then register it.
+
+In scripts/etl/extractors/__init__.py add:
+
+    from .azure_blob_source import AzureBlobExtractor
+    register("azure_blob", AzureBlobExtractor)
+
+sources.json entry:
+
+    {
+      "name": "events_blob",
+      "type": "azure_blob",
+      "enabled": true,
+      "connection": {
+        "account_url": "https://myacct.blob.core.windows.net",
+        "container": "raw",
+        "prefix": "events/2026/",
+        "format": "csv"
+      },
+      "extract": { "mode": "full" },
+      "business_rules": ["trim_whitespace"],
+      "reconciliation": { "expect_min_rows": 1 }
+    }
+
+Auth: DefaultAzureCredential (managed identity in prod; `az login` locally).
+Keep connection strings / account keys in an env var or Key Vault.
+Dependencies: add `azure-storage-blob` and `azure-identity` to requirements.txt.
+"""
+from __future__ import annotations
+
+import csv
+import io
+
+from .base import Extractor
+
+
+class AzureBlobExtractor(Extractor):
+    type_name = "azure_blob"
+
+    def extract(self) -> list[dict]:
+        from azure.identity import DefaultAzureCredential
+        from azure.storage.blob import ContainerClient  # third-party
+
+        conn = self.source.connection
+        container = ContainerClient(
+            account_url=conn["account_url"],
+            container_name=conn["container"],
+            credential=DefaultAzureCredential(),
+        )
+
+        rows: list[dict] = []
+        for blob in container.list_blobs(name_starts_with=conn.get("prefix", "")):
+            text = container.download_blob(blob.name).readall().decode("utf-8")
+            rows.extend(csv.DictReader(io.StringIO(text)))
+        return rows

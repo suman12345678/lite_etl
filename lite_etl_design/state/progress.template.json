@@ -1,0 +1,26 @@
+{
+  "project_name": null,
+  "workspace_path": null,
+  "created": null,
+  "updated": null,
+  "active_phase": "1_requirements",
+  "phases": {
+    "1_requirements": {
+      "status": "not_started",
+      "owner_skill": "gather-etl-requirements",
+      "deliverables": [],
+      "open_questions_count": null,
+      "notes": "Interactive interview with the user (11 areas, incl. 10-platform-and-deployment: target engine & portability, dbt, Terraform/IaC, CI/CD), then write <workspace>/requirements/*.md"
+    },
+    "2_architecture": {
+      "status": "not_started",
+      "owner_skill": "design-etl-architecture",
+      "deliverables": [],
+      "notes": "Reads phase 1 output, writes <workspace>/design/*.md incl. mermaid diagrams, transformation-design.md (dbt) and deployment-and-iac.md (Terraform + CI/CD)"
+    },
+    "3_build_and_test": { "status": "planned", "notes": "Scaffold components + the dbt project (models, snapshots, tests) with unit tests against fixtures" },
+    "4_pipeline_and_git": { "status": "planned", "notes": "Orchestrator pipelines + Terraform modules per env + CI/CD (plan/apply + dbt build) + repo push" },
+    "5_full_testing_and_hardening": { "status": "planned", "notes": "Integration/contract tests, CI gates, drift detection, observability, security review, backfill + rollback drills" }
+  },
+  "history": []
+}

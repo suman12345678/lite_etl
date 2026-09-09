@@ -1,0 +1,7 @@
+# The base plugin (local CSV connector) uses ONLY the Python standard library.
+# Add a line here as you implement each connector, then `pip install -r requirements.txt`.
+#
+#   google-cloud-bigquery>=3.20      # for extractors/bigquery_source.py
+#   azure-storage-blob>=12.19        # for extractors/azure_blob_source.py
+#   azure-identity>=1.16             #   "        "
+#   snowflake-connector-python>=3.7  # example: a Snowflake connector

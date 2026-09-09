@@ -1,0 +1,8 @@
+{
+  "name": "Northwind Commerce - Unified Retail Analytics Harness (DEMO)",
+  "created": "2026-09-09",
+  "harness_path": "<path to>/lite_etl_design",
+  "harness_version": "0.2",
+  "demo": true,
+  "note": "Fictional client and requirements. Built end-to-end with the lite-etl-design harness (v0.2) to show the platform / transformation-framework / deployment area: Databricks lakehouse, dbt, Terraform, Dagster. See README.md."
+}

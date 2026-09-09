@@ -1,0 +1,4 @@
+"""TEMPLATE: REST / GraphQL API connector (pagination, rate limits, auth)
+
+SCAFFOLD ONLY - not implemented yet. See README.md and docs/.
+"""

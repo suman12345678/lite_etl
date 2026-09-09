@@ -1,0 +1,14 @@
+{
+  "name": "dwh-extract-full-marketplace",
+  "owner": {
+    "name": "Suman",
+    "email": "suman.ju06@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "dwh-extract-full",
+      "source": "./dwh-extract-full",
+      "description": "Enterprise data-warehouse extraction plugin (SCAFFOLD): generic connectors, standard business-rule checks applied during extraction, atomic landing-zone loading, full reconciliation, requirements intake, observability, and testing. Structure first; logic added incrementally."
+    }
+  ]
+}

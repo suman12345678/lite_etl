@@ -1,0 +1,10 @@
+{
+  "name": "dwh-extract",
+  "version": "0.1.0",
+  "description": "Minimal, extensible ETL extraction stage for a data warehouse. Extract -> business rules -> land -> manifest -> reconcile. Ships with a local-CSV connector; designed to be extended with BigQuery, Azure Blob, and more.",
+  "author": {
+    "name": "Suman",
+    "email": "suman.ju06@gmail.com"
+  },
+  "keywords": ["etl", "elt", "data-warehouse", "extraction", "landing-zone", "reconciliation", "ingestion"]
+}

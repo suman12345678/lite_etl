@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Runtime output (regenerated every run)
+dwh-extract-full/landing_zone/**
+!dwh-extract-full/landing_zone/README.md
+dwh-extract-full/state/**
+!dwh-extract-full/state/.gitkeep
+dwh-extract-full/logs/**
+!dwh-extract-full/logs/.gitkeep
+
+# Requirements uploads are inputs, not source - keep them out of the repo by default
+dwh-extract-full/requirements/inbox/**
+!dwh-extract-full/requirements/inbox/.gitkeep
+dwh-extract-full/requirements/processed/**
+!dwh-extract-full/requirements/processed/.gitkeep
+
+# Secrets - never commit
+*.secret
+*.pem
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

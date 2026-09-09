@@ -1,0 +1,13 @@
+{
+  "name": "dwh-extract-full",
+  "version": "0.0.1",
+  "description": "Enterprise DWH extraction: generic source connectors -> standard business-rule checks -> atomic landing zone -> full reconciliation. Requirements-driven onboarding, observability, security, and testing built in. SCAFFOLD - structure only; components filled in incrementally.",
+  "author": {
+    "name": "Suman",
+    "email": "suman.ju06@gmail.com"
+  },
+  "keywords": [
+    "etl", "elt", "extraction", "data-warehouse", "landing-zone",
+    "reconciliation", "data-quality", "business-rules", "ingestion", "enterprise"
+  ]
+}

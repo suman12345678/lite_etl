@@ -1,0 +1,34 @@
+{
+  "_comment": "Paths resolve relative to THIS file's folder. ~ and ${ENV_VARS} are expanded. Override the landing zone with the ETL_LANDING_ZONE env var.",
+  "landing_zone": "../landing",
+  "sources": [
+    {
+      "name": "customers_csv",
+      "type": "csv",
+      "enabled": true,
+      "connection": {
+        "path": "../sample_data/customers.csv",
+        "delimiter": ",",
+        "encoding": "utf-8"
+      },
+      "extract": {
+        "mode": "full",
+        "watermark_column": null
+      },
+      "business_rules": [
+        "trim_whitespace",
+        "rename:cust_id->customer_id",
+        "cast_int:customer_id",
+        "drop_if_null:customer_id",
+        "upper:country",
+        "mask:email"
+      ],
+      "reconciliation": {
+        "control_total_column": "balance",
+        "tolerance": 0.01,
+        "key_columns": ["customer_id"],
+        "expect_min_rows": 3
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+# dwh-extract-full - Python dependencies
+#
+# SCAFFOLD: the base engine targets the standard library only. Add a line here as
+# you implement each connector / format / backend, then `pip install -r`.
+#
+# Suggested (uncomment when the matching module is implemented):
+#   pyyaml>=6                        # config loading (config/*.yaml)
+#   pydantic>=2                      # config/schema.py typed models
+#   pyarrow>=15                      # formats/parquet.py
+#   pandas>=2                        # optional: bulk transforms / reconciliation
+#   sqlalchemy>=2                    # connectors/rdbms.py
+#   google-cloud-bigquery>=3.20      # connectors/bigquery
+#   snowflake-connector-python>=3.7  # connectors/snowflake
+#   boto3>=1.34                      # connectors/s3, landing/targets/s3
+#   google-cloud-storage>=2.16       # connectors/gcs, landing/targets/gcs
+#   azure-storage-blob>=12.19        # connectors/azure_blob, landing/targets/azure_blob
+#   azure-identity>=1.16
+#   paramiko>=3.4                    # connectors/sftp
+#   requests>=2.32                   # connectors/rest_api
+#   confluent-kafka>=2.4             # connectors/kafka
+#   hvac>=2                          # security/secrets.py (HashiCorp Vault)
+#   openlineage-python>=1.9          # observability/lineage.py
+#   pytest>=8                        # tests/

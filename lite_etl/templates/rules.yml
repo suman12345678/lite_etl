@@ -1,0 +1,15 @@
+# Data quality + reconciliation. One place. Run by demo/ locally; by dbt tests +
+# the publish gate in prod. Each `expect` is SQL; true = pass.
+
+quality:
+  - id: <slug>
+    table: <model>
+    expect: "<boolean SQL, e.g. order_id is not null>"
+    on_fail: warn        # warn = log · quarantine = row -> reject_<table> · fail = stop the run
+
+reconcile:
+  - id: <slug>
+    query: "<scalar SQL, e.g. sum(net_amount_usd) from fct_order where channel='direct'>"
+    expect: "<scalar SQL, the source of truth, e.g. select expected from control_totals where channel='direct'>"
+    tolerance_pct: 0.5
+    on_fail: block        # block = no publish, exit non-zero, alert

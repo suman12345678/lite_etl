@@ -1,0 +1,33 @@
+# Data quality + reconciliation. One place. Run by demo/rules.py locally; by dbt
+# tests + the publish gate in prod. Each `expect` is SQL; true = pass.
+#
+# on_fail:  warn = log only  |  quarantine = row -> reject_<table>, run continues
+#           fail = stop the run now  |  block = no publish, exit non-zero, alert
+
+quality:
+  - id: order_id_present
+    table: fct_order
+    expect: "order_id is not null"
+    on_fail: fail
+
+  - id: net_usd_non_negative
+    table: fct_order
+    expect: "net_usd >= 0"
+    on_fail: quarantine
+
+  - id: known_currency
+    table: fct_order
+    expect: "currency in ('EUR','GBP','INR','JPY','USD')"
+    on_fail: quarantine
+
+  - id: no_raw_email_in_marts          # PII guard: hashed column must not look like an address
+    table: dim_customer
+    expect: "email_sha256 not like '%@%'"
+    on_fail: fail
+
+reconcile:
+  - id: web_net_usd_vs_finance
+    query: "select coalesce(sum(net_usd), 0) from fct_order where channel = 'web'"
+    expect: "select expected_net_usd from control_totals where channel = 'web'"
+    tolerance_pct: 0.5
+    on_fail: block

@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: stg_invoices
+    description: One clean row per invoice_id, deduped on latest updated_at, merged account ids resolved.
+    columns:
+      - name: invoice_id
+        tests: [not_null, unique]
+      - name: currency
+        tests:
+          - accepted_values:
+              values: ["USD", "EUR", "GBP"]
+
+  - name: stg_accounts
+    description: Account master with merged rows removed and billing_email replaced by a sha256 hash.
+    columns:
+      - name: account_id
+        tests: [not_null, unique]
+      - name: email_sha256
+        description: sha256 of the lowercased billing_email. Must never contain '@' (PII guard).
+
+  - name: stg_subscriptions
+    columns:
+      - name: subscription_id
+        tests: [not_null, unique]
+
+  - name: stg_plans
+    columns:
+      - name: plan_code
+        tests: [not_null, unique]
+
+  - name: stg_fx_rates
+    columns:
+      - name: currency
+        tests: [not_null]
+      - name: rate_month
+        tests: [not_null]

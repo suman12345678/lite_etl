@@ -1,0 +1,4 @@
+# Optional: only needed to run the dbt slice on DuckDB (make dbt-ci).
+# Not required for `python -m demo.run`.
+-r requirements.txt
+dbt-duckdb>=1.7,<2.0

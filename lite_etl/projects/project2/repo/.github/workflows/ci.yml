@@ -1,0 +1,53 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+
+      - name: clean run publishes
+        run: python -m demo.run --scenario clean
+
+      - name: bad data blocks the publish (must exit 1)
+        run: |
+          set +e
+          python -m demo.run --scenario fail
+          rc=$?
+          set -e
+          test $rc -eq 1 && echo "OK: demo-fail exited 1"
+
+  dbt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dbt.txt
+      - name: dbt parse + seed (DuckDB slice)
+        working-directory: dbt
+        run: |
+          dbt deps
+          dbt seed --target ci
+          # TODO: point sources at a loaded DuckDB file, then: dbt build --target ci
+          dbt parse --target ci
+
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: terraform validate (dev)
+        working-directory: infra/envs/dev
+        run: |
+          terraform init -backend=false
+          terraform validate

@@ -1,0 +1,30 @@
+# Dagster code-location descriptor for northwind_daily.
+# Phase 4 scaffold - see pipeline/orchestration-wiring.md.
+#
+# mode is set per env from the orchestrator/ Terraform module (Q3 / ADR-005):
+#   cloud_agent   -> Dagster Cloud hybrid, ECS Fargate agent (default)
+#   oss_selfhost  -> Dagster OSS webserver + daemon on the same ECS cluster
+# Asset code is identical in both modes.
+
+location_name: northwind_daily
+code_source:
+  package_name: northwind_dagster        # NOT `dagster` - avoids shadowing the library
+
+build:
+  directory: .
+  registry: "TODO.dkr.ecr.eu-west-2.amazonaws.com/northwind-dagster"   # TODO account/region
+
+# --- cloud_agent (dagster-cloud CLI: `dagster-cloud deployment ...`) -----------
+container_context:
+  ecs:
+    env_vars:
+      - NORTHWIND_ENV                    # dev | stg | prd - set by the deploy job
+      - AWS_REGION
+    secrets_tags:
+      - northwind/dagster                # Secrets Manager tag -> DATABRICKS_TOKEN, PAGERDUTY_ROUTING_KEY, ...
+    task_role_arn: "TODO"               # from orchestrator/ module output
+    execution_role_arn: "TODO"
+
+# --- oss_selfhost (workspace.yaml equivalent, loaded by webserver + daemon) ----
+# load_from:
+#   - python_package: northwind_dagster

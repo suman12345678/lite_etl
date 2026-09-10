@@ -1,0 +1,22 @@
+# EXAMPLE ONLY. The real config/<env>.generated.yml is written by CI from
+# `terraform output -json` after `infra/envs/<env>` applies (scripts/tf_to_config.py),
+# and is git-ignored. ref: pipeline/environments-and-config.md "Config layering" layer 3.
+# Same shape for stg / prd.
+catalog: northwind_dev
+storage:
+  landing_uri:   "s3://northwind-dev-lakehouse/bronze"
+  inbound_uri:   "s3://northwind-dev-inbound"
+  manifests_uri: "s3://northwind-dev-lakehouse/_manifests"
+  recon_uri:     "s3://northwind-dev-lakehouse/_recon"
+warehouse:
+  http_path: "/sql/1.0/warehouses/TODO"        # from the Databricks warehouse resource
+orchestrator:
+  deployment_name: "northwind-dev"
+  mode: "cloud_agent"
+lineage:
+  endpoint: "TODO OpenLineage collector URL"
+alerts:
+  sns_topic_arn: "arn:aws:sns:eu-west-2:TODO:northwind-dev-alerts"
+  slack_channel: "#northwind-data"
+ci:
+  role_arn: "arn:aws:iam::TODO:role/northwind-dev-ci"

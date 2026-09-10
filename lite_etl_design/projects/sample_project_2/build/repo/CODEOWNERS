@@ -1,0 +1,20 @@
+# Review ownership. ref: pipeline/git-workflow.md. Last matching pattern wins.
+# infra/ and .github/ require 2 reviews (GitHub branch-protection setting).
+
+*                       @northwind/data-eng
+
+/dbt/                   @northwind/analytics-eng
+/dbt/seeds/             @northwind/analytics-eng @northwind/data-eng
+
+/extractors/            @northwind/data-eng
+/recon/                 @northwind/data-eng
+/publish/               @northwind/data-eng
+/lineage/               @northwind/data-eng
+/obs/                   @northwind/data-eng
+/northwind_dagster/     @northwind/data-eng
+
+/infra/                 @northwind/data-platform
+/.github/               @northwind/data-platform
+
+/config/                @northwind/analytics-eng @northwind/data-eng
+/CODEOWNERS             @northwind/data-platform

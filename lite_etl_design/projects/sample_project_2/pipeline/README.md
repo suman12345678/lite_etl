@@ -24,7 +24,7 @@
 ## Scaffolded into `../build/repo/`
 
 - `infra/bootstrap/` + `infra/modules/{warehouse,storage,orchestrator,ga4,ci,observability}/` + `infra/envs/{dev,stg,prd}/`
-- `dagster/` code location - `assets/`, `checks/`, `resources.py`, `schedules.py`, `sensors.py`, `backfill.py`, `partitions.py`, `definitions.py`, `deployment.yaml`
+- `northwind_dagster/` code location - `assets/`, `checks/`, `resources.py`, `schedules.py`, `sensors.py`, `backfill.py`, `partitions.py`, `definitions.py`, `deployment.yaml`
 - `.github/workflows/{pr,main,promote,drift}.yml`
 - `CODEOWNERS`, extended `.pre-commit-config.yaml`, `config/<env>.generated.yml.example`
 

@@ -16,3 +16,12 @@ sources:
 obs:
   metrics_backend: stdout
   log_level: INFO
+# Dagster schedule crons (UTC) - consumed by northwind_dagster/schedules.py. ref: requirements/07
+schedule:
+  oltp_ingest:    "0 */4 * * *"
+  shopify_ingest: "0 * * * *"
+  pos_ingest:     "0 4 * * *"      # sweep backstop; primary trigger = pos_s3_sensor
+  salesforce_ingest: "0 */6 * * *"
+  ga4_ingest:     "0 4 * * *"      # D-2 shard
+  fx_ingest:      "0 5 * * *"
+  curated_build:  "15 5 * * *"     # + downstream reconcile/publish; SLA publish by 06:00

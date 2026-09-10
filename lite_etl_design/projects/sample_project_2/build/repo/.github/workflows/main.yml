@@ -1,0 +1,95 @@
+# Merge to main -> apply + dbt build + Dagster deploy for DEV, then smoke.
+# ref: pipeline/cicd-plan.md "main.yml". Phase 4 scaffold - account values TODO.
+name: main
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-dev            # serialise dev deploys
+  cancel-in-progress: false
+
+jobs:
+  apply-dev:
+    runs-on: [self-hosted, northwind, dev]
+    environment: dev           # no reviewers - auto
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::TODO_DEV_ACCT:role/northwind-dev-ci
+          aws-region: eu-west-2
+      - uses: hashicorp/setup-terraform@v3
+      - run: |
+          cd infra/envs/dev
+          terraform init
+          terraform apply -auto-approve -var-file=dev.tfvars
+          terraform output -json > "$GITHUB_WORKSPACE/tf-output.json"
+      - run: python scripts/tf_to_config.py tf-output.json config/dev.generated.yml   # TODO helper
+      - uses: actions/upload-artifact@v4
+        with: { name: dev-generated-config, path: config/dev.generated.yml }
+
+  dbt-dev:
+    needs: apply-dev
+    runs-on: [self-hosted, northwind, dev]
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv pip install --system -e ".[dev]" dbt-databricks~=1.8.0
+      - env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST_DEV }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+        run: |
+          cd dbt
+          dbt build --target dev --vars "{business_date: $(date -u +%F), run_id: ci-${{ github.sha }}}"
+      - name: package manifest for promotion
+        run: aws s3 cp dbt/target/manifest.json s3://northwind-dev-lakehouse/_manifests/dbt/${{ github.sha }}.json
+
+  deploy-dagster-dev:
+    needs: dbt-dev
+    runs-on: [self-hosted, northwind, dev]
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::TODO_DEV_ACCT:role/northwind-dev-ci
+          aws-region: eu-west-2
+      - name: deploy code location (cloud_agent)
+        if: vars.ORCHESTRATOR_MODE_DEV == 'cloud_agent'
+        env:
+          DAGSTER_CLOUD_API_TOKEN: ${{ secrets.DAGSTER_CLOUD_API_TOKEN_DEV }}
+        run: |
+          uv pip install --system 'dagster-cloud[serverless]'
+          dagster-cloud serverless deploy-python-executable --location-name northwind_daily --deployment northwind-dev  # TODO
+      - name: deploy image (oss_selfhost)
+        if: vars.ORCHESTRATOR_MODE_DEV == 'oss_selfhost'
+        run: |
+          echo "docker build -t TODO_ECR/northwind-dagster:${{ github.sha }} . && push && aws ecs update-service ..."  # TODO
+
+  smoke-dev:
+    needs: deploy-dagster-dev
+    runs-on: [self-hosted, northwind, dev]
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv pip install --system -e ".[dev]" dbt-databricks~=1.8.0
+      - env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST_DEV }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+        run: |
+          cd dbt
+          dbt source freshness --target dev
+          dbt build --select tag:canary --target dev
+      - name: assert last reconcile PASS
+        run: echo "TODO query the Dagster GraphQL API for the latest reconcile asset-check result"
+      - name: rollback dev on failure
+        if: failure()
+        run: echo "TODO re-apply + redeploy the previous SHA; block promotion"

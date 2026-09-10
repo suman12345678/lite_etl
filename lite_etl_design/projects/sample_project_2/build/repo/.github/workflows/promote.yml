@@ -1,0 +1,84 @@
+# Promote a dev-built SHA to stg then prd. Same SHA + dbt manifest, never rebuilt.
+# ref: pipeline/cicd-plan.md "promote.yml". Phase 4 scaffold - account values TODO.
+name: promote
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: "git SHA already built + deployed to dev"
+        required: true
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write        # git tag + release notes
+  id-token: write
+
+jobs:
+  promote-stg:
+    runs-on: [self-hosted, northwind, stg]
+    environment: stg      # 1 reviewer (GitHub Environment protection)
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha || github.sha }}
+      - name: precondition - dev healthy, last dev reconcile PASS
+        run: echo "TODO check dev smoke + reconcile status"
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::TODO_SHARED_ACCT:role/northwind-stg-ci
+          aws-region: eu-west-2
+      - uses: hashicorp/setup-terraform@v3
+      - run: |
+          cd infra/envs/stg && terraform init && terraform apply -auto-approve -var-file=stg.tfvars
+      - uses: astral-sh/setup-uv@v3
+      - run: uv pip install --system -e ".[dev]" dbt-databricks~=1.8.0
+      - name: reuse the promoted manifest
+        run: aws s3 cp s3://northwind-dev-lakehouse/_manifests/dbt/${{ inputs.sha || github.sha }}.json dbt/target/manifest.json
+      - env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST_STG }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_STG }}
+        run: cd dbt && dbt build --target stg --defer --state target
+      - name: deploy Dagster stg + smoke
+        run: echo "TODO dagster-cloud deploy --deployment northwind-stg ; dbt build --select tag:canary --target stg"
+
+  promote-prd:
+    needs: promote-stg
+    runs-on: [self-hosted, northwind, prd]
+    environment: prd      # 2 reviewers from @northwind/data-platform + change window
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha || github.sha }}
+      - name: change-window gate (Tue/Thu unless hotfix)
+        run: |
+          DOW=$(date -u +%u)   # 2=Tue 4=Thu
+          if [ "$DOW" != "2" ] && [ "$DOW" != "4" ] \
+             && ! ${{ contains(github.event.head_commit.message, '[hotfix]') }}; then
+            echo "::error::outside the Tue/Thu prd change window and not a hotfix"; exit 1
+          fi
+      - name: precondition - stg healthy 24h
+        run: echo "TODO check stg smoke history"
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::TODO_PRD_ACCT:role/northwind-prd-ci
+          aws-region: eu-west-2
+      - uses: hashicorp/setup-terraform@v3
+      - run: |
+          cd infra/envs/prd && terraform init && terraform apply -auto-approve -var-file=prd.tfvars
+      - uses: astral-sh/setup-uv@v3
+      - run: uv pip install --system -e ".[dev]" dbt-databricks~=1.8.0
+      - run: aws s3 cp s3://northwind-dev-lakehouse/_manifests/dbt/${{ inputs.sha || github.sha }}.json dbt/target/manifest.json
+      - env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST_PRD }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PRD }}
+        run: cd dbt && dbt build --target prd --defer --state target
+      - name: deploy Dagster prd + smoke
+        run: echo "TODO dagster-cloud deploy --deployment northwind-prd ; dbt build --select tag:canary --target prd"
+      - name: tag the release
+        run: |
+          VER=$(date -u +v%Y.%m.%d)   # TODO real SemVer bump
+          git tag "$VER" && git push origin "$VER"
+      - name: release notes
+        run: echo "TODO generate from merged PR titles since the last tag"

@@ -8,3 +8,12 @@ dbt/logs/
 __pycache__/
 .pytest_cache/
 .coverage
+
+# Phase 4
+.terraform/
+*.tfstate
+*.tfstate.*
+tfplan
+crash.log
+config/*.generated.yml
+!config/*.generated.yml.example

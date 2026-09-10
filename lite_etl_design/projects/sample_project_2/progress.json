@@ -3,7 +3,7 @@
   "workspace_path": "projects/sample_project_2",
   "created": "2026-09-09",
   "updated": "2026-09-09",
-  "active_phase": "4_pipeline_and_git",
+  "active_phase": "complete",
   "phases": {
     "1_requirements": {
       "status": "complete",
@@ -66,8 +66,38 @@
       ],
       "notes": "Build plan (9 components, lowest-dependency-first) + one buildsheet per component + dbt-project-scaffold + fixtures-catalog + local-dev guide. Scaffolded build/repo/ (152 files): Python 3.12 extractors for the 6 sources + common/ (config, state, secrets, landing, manifest, base, http, dbt_runner); recon/ publish/ lineage/ obs/; the dbt project (39 model stubs across staging/intermediate/marts + 4 snapshots + 5 seeds + 5 macros + 5 tests) with a DuckDB ci target; 14 skipped unit-test stubs; tiny synthetic fixtures; Makefile + pyproject + pre-commit. Stubs + TODO bodies only - Python compiles, dbt/config YAML parses. 4 open items (O1-O4); O2/O3 tied to Q3/Q4."
     },
-    "4_pipeline_and_git": { "status": "not_started", "owner_skill": "assemble-etl-pipeline", "deliverables": [], "notes": "Next: /assemble-pipeline - Dagster asset graph, Terraform modules per env, GitHub Actions, wire make test into CI." },
-    "5_full_testing_and_hardening": { "status": "not_started", "owner_skill": "harden-etl-pipeline", "deliverables": [] }
+    "4_pipeline_and_git": {
+      "status": "complete",
+      "owner_skill": "assemble-etl-pipeline",
+      "deliverables": [
+        "repo-layout.md",
+        "orchestration-wiring.md",
+        "iac-plan.md",
+        "cicd-plan.md",
+        "git-workflow.md",
+        "environments-and-config.md",
+        "README.md",
+        "build/repo/ (+43 files scaffolded: northwind_dagster/, infra/, .github/workflows/, CODEOWNERS)"
+      ],
+      "notes": "7 pipeline docs + skeletons. northwind_dagster/ code location (package NOT named `dagster` to avoid shadowing the lib): 6 ingest assets + @dbt_assets curated_build + publish/catalog_register/advance_watermarks/emit_metrics + reconcile as a blocking @asset_check; schedules per 07 cron, pos_s3_sensor, backfill.py, deployment.yaml (var.mode cloud_agent|oss_selfhost = Q3). infra/ Terraform: bootstrap/ (S3+DynamoDB state) + 6 modules (warehouse, storage, orchestrator, ga4, ci, observability) + envs/{dev,stg,prd} dir-per-env; providers pinned; values are var refs/TODO. .github/workflows/{pr,main,promote,drift}.yml with OIDC, self-hosted runners, stg 1-approver / prd 2-approver + Tue/Thu window. Extended .pre-commit-config.yaml + CODEOWNERS + config/<env>.generated.yml.example + schedule block in defaults.yml + pyproject [orchestration] extra. Python compiles; YAML parses. terraform fmt/validate NOT run (not installed; it is a pre-commit + pr.yml gate). Open: Q3 (mode default cloud_agent), Q2 (backfill depth = runtime param), Q4 (dbt-only, carried)."
+    },
+    "5_full_testing_and_hardening": {
+      "status": "complete",
+      "owner_skill": "harden-etl-pipeline",
+      "deliverables": [
+        "test-strategy.md",
+        "dq-behaviour-matrix.md",
+        "reconciliation-fixtures.md",
+        "integration-e2e-plan.md",
+        "ci-gates.md",
+        "observability-wiring.md",
+        "security-review.md",
+        "runbook.md",
+        "go-live-checklist.md",
+        "README.md"
+      ],
+      "notes": "10 hardening docs. Test pyramid unit/data/contract/integration(I1-I7)/e2e(E1-E8); 80% cov gate. DQ matrix DQ01-DQ15 covering every requirements/04 rule + thresholds (0.5% fail / 0.1% warn per business date) + freshness + schema-drift. Reconciliation fixtures R1-R8 (row-count, GMV control totals per channel, refund linkage, order=lines, FX coverage, dup keys, distribution drift 30/60, PII leak) each PASS/FAIL/boundary + gate action + report + replay assertions. CI gates: merge adds contract+integration-subset+iac-scan(checkov/tfsec)+fail-on-critical pip-audit; promote prd needs security sign-off + empty drift + change window. Observability: 12 metrics, 4 dashboards, alert table A1-A12 -> PagerDuty/Slack mapped to 07/09, 6 SLOs. Security review: 9 findings - F1 gold_pii row filter+column mask not implemented (High), F2 Databricks secret scopes+ACLs not in IaC (High, = /validate-config #5), F3 catalog-wide SP grants, F4 empty CI IAM policy, F5 orchestrator SG egress 0.0.0.0/0, F6 retention/lifecycle vs 08 mismatch, F7 no RTBF impl/drill, F8 supply chain (unpinned, no lockfile), F9 DynamoDB/ECS encryption. Runbook: normal day, per-alert + per-recon-check triage, backfill, 5 rollback procedures. Go-live: 18 readiness items, 6 drills (backfill/rollback/failure/RTBF/DR/peak-load), cutover + rollback plan. Carries Phase 4 /validate-config gaps #5->F2 and #15->DQ14/DQ15/go-live item 6. Open: Q3 Dagster Cloud SaaS review (go-live item 17), Q2 backfill depth, Q4 wholesale grain (go-live item 18). Specs only - nothing run/deployed."
+    }
   },
   "history": [
     { "date": "2026-09-09", "phase": "0", "event": "/etl-new-project sample_project_2 - workspace scaffolded" },
@@ -75,6 +105,9 @@
     { "date": "2026-09-09", "phase": "1_requirements", "event": "/gather-requirements - interview across 11 areas, 13 files written, 5 open questions" },
     { "date": "2026-09-09", "phase": "1_requirements", "event": "/finalize-requirements - Q1 and Q5 answered, files refreshed (00, 08, 10, 99 to v1.1)" },
     { "date": "2026-09-09", "phase": "2_architecture", "event": "/design-architecture - 11 design files written incl. 4 mermaid diagrams, transformation-design.md and deployment-and-iac.md" },
-    { "date": "2026-09-09", "phase": "3_build_and_test", "event": "/build-components - 14 build docs + build/repo/ scaffold (152 files: 6 extractors, dbt project with 39 model stubs, recon/publish/lineage/obs, 14 unit-test stubs, fixtures). Stubs + TODOs only." }
+    { "date": "2026-09-09", "phase": "3_build_and_test", "event": "/build-components - 14 build docs + build/repo/ scaffold (152 files: 6 extractors, dbt project with 39 model stubs, recon/publish/lineage/obs, 14 unit-test stubs, fixtures). Stubs + TODOs only." },
+    { "date": "2026-09-09", "phase": "4_pipeline_and_git", "event": "/assemble-pipeline - 7 pipeline docs + skeletons into build/repo/ (northwind_dagster/ code location with the blocking reconcile asset check, infra/ Terraform bootstrap + 6 modules + dev/stg/prd envs, .github/workflows/{pr,main,promote,drift}.yml, CODEOWNERS, extended pre-commit). Skeletons + TODOs only; Python compiles, YAML parses. active_phase -> 5_full_testing_and_hardening." },
+    { "date": "2026-09-09", "phase": "4_pipeline_and_git", "event": "/validate-config - 14 PASS / 2 minor GAP (F-#5 Databricks secret scopes not scaffolded; #15 source_freshness/schema_drift assets are TODO comments). No blocking issues; gaps carried into Phase 5." },
+    { "date": "2026-09-09", "phase": "5_full_testing_and_hardening", "event": "/harden-pipeline - 10 hardening docs (test-strategy, dq-behaviour-matrix DQ01-15, reconciliation-fixtures R1-8, integration-e2e-plan I1-7/C1-4/E1-8, ci-gates, observability-wiring A1-12 + 6 SLOs, security-review F1-9, runbook, go-live-checklist 18 items + 6 drills). Specs only. All 5 phases complete; go-live-checklist.md is the handoff." }
   ]
 }

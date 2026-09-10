@@ -1,0 +1,14 @@
+# stg overlay. Resource names come from Terraform via stg.generated.yml (Phase 4).
+env: stg
+catalog: northwind_stg
+storage:
+  landing_uri: "s3://northwind-stg-lakehouse/bronze"     # TODO confirm
+  inbound_uri: "s3://northwind-stg-inbound"
+  manifests_uri: "s3://northwind-stg-lakehouse/_manifests"
+  recon_uri: "s3://northwind-stg-lakehouse/_recon"
+secrets:
+  scope_prefix: "northwind/stg"
+  pii_salt_ref: "secret-scope://northwind/stg/pii#salt"
+lineage:
+  endpoint: ""        # TODO OpenLineage collector URL
+  namespace: "northwind_stg"

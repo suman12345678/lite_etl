@@ -1,0 +1,29 @@
+name: "northwind"
+version: "0.1.0"
+config-version: 2
+profile: "northwind"
+
+model-paths: ["models"]
+snapshot-paths: ["snapshots"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+vars:
+  business_date: "1970-01-01"   # overridden by --vars at run time
+  run_id: "local"
+
+models:
+  northwind:
+    staging:      {+materialized: view, +schema: silver}
+    intermediate: {+materialized: ephemeral, +schema: silver}
+    marts:
+      core:      {+materialized: table, +schema: gold}
+      sales:     {+materialized: table, +schema: gold}
+      web:       {+materialized: table, +schema: gold}
+      wholesale: {+materialized: table, +schema: gold}
+      pii:       {+materialized: table, +schema: gold_pii}
+
+snapshots:
+  northwind:
+    +target_schema: silver

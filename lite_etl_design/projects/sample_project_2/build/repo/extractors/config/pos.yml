@@ -1,0 +1,6 @@
+# pos config - no secrets (secret-scope:// refs live in the pipeline env).
+source: pos
+objects: []          # TODO tables / endpoints / file pattern from requirements/01
+lookback_minutes: 60  # TODO per shape
+page_size: 1000
+timeout_s: 30

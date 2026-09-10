@@ -1,0 +1,18 @@
+# Safe-everywhere defaults. Per-env overlay in <env>.yml; secrets by reference only.
+dq:
+  fail_threshold_pct: 0.5
+  warn_threshold_pct: 0.1
+recon:
+  tolerance_pct: 0.5
+  drift_warn_pct: 30
+  drift_fail_pct: 60
+sources:
+  oltp:       {lookback_minutes: 60,  page_size: 5000}
+  shopify:    {lookback_minutes: 1440, page_size: 250, api_version: "2024-07"}
+  pos:        {key_template: "pos/dt={date}/store={store}/txns.csv.gz"}
+  salesforce: {lookback_minutes: 120, page_size: 10000}
+  ga4:        {shard_lag_days: 2}
+  fx:         {base_ccy: USD}
+obs:
+  metrics_backend: stdout
+  log_level: INFO

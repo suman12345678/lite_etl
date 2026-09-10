@@ -31,6 +31,9 @@ Create:
 - `<target>/requirements/`      (Phase 1 deliverables land here)
 - `<target>/design/`            (Phase 2 deliverables land here)
 - `<target>/notes/`             (optional interview transcripts / scratch)
+
+(Phases 3-5 create their own folders when run: `build/` incl. `build/repo/`,
+`pipeline/`, `hardening/`.)
 - `<target>/project.json`:
   ```json
   {
@@ -52,4 +55,6 @@ no trailing content).
 ## Report
 
 Tell me: the workspace path, that it is now the active project, and that the next
-step is `/gather-requirements`. Point me at `MAP.md` for the full picture.
+step is `/gather-requirements` (then `/design-architecture` -> `/build-components`
+-> `/assemble-pipeline` -> `/harden-pipeline`). Point me at `MAP.md` for the full
+picture.

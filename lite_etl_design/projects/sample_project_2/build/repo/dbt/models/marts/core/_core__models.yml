@@ -1,0 +1,26 @@
+version: 2
+models:
+  - name: dim_customer
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: customer_sk   # TODO real key/tests per requirements/04
+  - name: dim_product
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: customer_sk   # TODO real key/tests per requirements/04
+  - name: dim_store
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: customer_sk   # TODO real key/tests per requirements/04
+  - name: dim_account
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: customer_sk   # TODO real key/tests per requirements/04
+  - name: dim_fx_rate
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: customer_sk   # TODO real key/tests per requirements/04
+  - name: dim_date
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: customer_sk   # TODO real key/tests per requirements/04

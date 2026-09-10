@@ -43,6 +43,7 @@ Full input: [`intake/northwind-commerce-discovery.md`](intake/northwind-commerce
 | 3 | *(client answered Q1 & Q5)* | - | GA4 via a scheduled extract job (not federation); `gold_pii` stays in the same catalog under UC row filter + column mask (DPO-approved) | notes in `99-open-questions.md` |
 | 4 | `/finalize-requirements` | skill **`gather-etl-requirements`**, Step 2 onward (no re-interview) | folded the two answers in, bumped `00`, `08`, `10`, `99` to v1.1 | updated requirement files |
 | 5 | `/design-architecture` | skill **`design-etl-architecture`** | read every `requirements/*` file (incl. `99-open-questions.md` -> design assumptions); settled the load-bearing choices **including transformation framework & warehouse portability and infrastructure & deployment**; wrote the design set with 4 Mermaid diagrams, the **dbt project blueprint** and the **Terraform + CI/CD deployment design**; built the traceability matrix | [`design/`](design/) (11 files); `progress.json` phase 2 -> complete |
+| 6 | `/build-components` | skill **`build-etl-components`** | read the whole `design/`; set the 9-component build order (lowest dependency first); wrote a buildsheet per component + the dbt-project-scaffold map + fixtures catalog + local-dev guide; **scaffolded `build/repo/`** (152 files) - 6 Python extractor stubs + `common/`, `recon/ publish/ lineage/ obs/`, the dbt project (39 model stubs + snapshots + seeds + macros + tests, DuckDB `ci` target), 14 skipped unit-test stubs, synthetic fixtures, `Makefile`/`pyproject`. Stubs + `TODO` bodies only | [`build/`](build/) (14 docs) + [`build/repo/`](build/repo/); `progress.json` phase 3 -> complete |
 | - | `/etl-design-status` (any time) | inline command | prints: active project, phase, deliverable counts, next command | (console only) |
 | - | *(new session)* | **SessionStart hook** `session_context.py` | one-line banner: `active project: Northwind Commerce... phases: 1_requirements=complete \| 2_architecture=complete ...` | (console only) |
 
@@ -55,9 +56,9 @@ prose, and every "use your judgement" assumption - is in
 ## 3. What each harness building block did here
 
 - **Slash commands** (`/etl-new-project`, `/gather-requirements`,
-  `/finalize-requirements`, `/design-architecture`, `/etl-design-status`) were the
-  only things typed. Each resolves this workspace from `state/active-workspace`
-  and invokes a skill.
+  `/finalize-requirements`, `/design-architecture`, `/build-components`,
+  `/etl-design-status`) were the only things typed. Each resolves this workspace
+  from `state/active-workspace` and invokes a skill.
 - **Skill `gather-etl-requirements`** ran on the **main thread** (it interviews a
   person). It owns the 11-area coverage - area **10** is the new one: target
   engine & portability, the dbt project, Terraform / IaC, CI/CD promotion.
@@ -82,7 +83,7 @@ prose, and every "use your judgement" assumption - is in
 ```
 sample_project_2/
 ├── project.json                 name, created date, which harness built it (v0.2)
-├── progress.json                phase tracker (1 & 2 complete; 3-5 planned)
+├── progress.json                phase tracker (1-3 complete; 4-5 not started)
 ├── README.md                    this file
 ├── intake/
 │   └── northwind-commerce-discovery.md      client's raw notes (the interview's starting point)
@@ -112,26 +113,46 @@ sample_project_2/
 │   ├── pipeline-blueprint.md     Mermaid Dagster asset graph, asset table, gate + backfill + alert policies, SLA chain
 │   ├── design-decisions.md       ADR-001..006 + 3 open decisions
 │   └── traceability-matrix.md    every requirement -> design element -> covered/partial/deferred
+├── build/                       Phase 3 output (14 docs + a scaffolded repo)
+│   ├── README.md                index + status
+│   ├── build-plan.md            9-component build order, "complete" definition, CI hook
+│   ├── component-buildsheet-*.md   one per component (config, secrets, extractor, landing,
+│   │                            dbt-runner, reconciliation, publisher, lineage, observability)
+│   ├── dbt-project-scaffold.md  the dbt tree + model/test/snapshot/seed -> design map
+│   ├── fixtures-catalog.md      per-source sample/edge fixtures + golden outputs + recon fixtures
+│   ├── local-dev.md             prereqs, make targets, faking each source, the dev loop
+│   └── repo/                    scaffolded starter repo (152 files, stubs + TODOs):
+│       ├── extractors/          6 source stubs + common/ (config, state, secrets, landing, base, http, dbt_runner)
+│       ├── recon/ publish/ lineage/ obs/   engine stubs
+│       ├── dbt/                 39 model stubs (staging/intermediate/marts) + 4 snapshots + 5 seeds
+│       │                        + 5 macros + 5 tests; DuckDB `ci` target
+│       ├── tests/               14 skipped unit-test stubs + synthetic fixtures + golden/
+│       └── config/ Makefile pyproject.toml .pre-commit-config.yaml
 └── notes/
     └── interview-highlights.md   how the interview ran (MCQ vs prose, assumptions)
 ```
 
 ---
 
-## 5. What a real engagement would do next (not built by this harness yet)
+## 5. What comes next
 
-- **Step 3 - Build & test:** scaffold the extractors + the **dbt project**
-  (`models/staging|intermediate|marts`, `snapshots/`, `seeds/`, `tests/recon_*`,
-  `sources.yml`) with unit tests on `dbt-duckdb` and fixtures.
-- **Step 4 - Pipeline & Git:** the Dagster asset code, the **Terraform** modules
-  under `infra/envs/{dev,stg,prd}`, the GitHub Actions workflows
-  (`plan/apply` + `dbt build` + promotion), repo layout, push.
-- **Step 5 - Full testing & hardening:** integration + contract tests, DQ
-  behaviour matrices, reconciliation fixtures, `dbt build` + `terraform plan` CI
-  gates, drift detection, observability wiring, security review, a peak-volume
-  cost dry-run, backfill + prod rollback drills.
+This demo has run Phases 1-3. The remaining harness steps run the same way:
 
-See [`../../docs/process-overview.md`](../../docs/process-overview.md).
+- **`/assemble-pipeline` (Step 4):** the Dagster asset code, the **Terraform**
+  modules under `infra/envs/{dev,stg,prd}`, the GitHub Actions workflows
+  (`plan/apply` + `dbt build` + promotion) as skeletons added to `build/repo/`,
+  plus `repo-layout.md`, `orchestration-wiring.md`, `iac-plan.md`,
+  `cicd-plan.md`, `git-workflow.md`, `environments-and-config.md` in `pipeline/`.
+  Then `/validate-config`.
+- **`/harden-pipeline` (Step 5):** the test strategy, the DQ behaviour matrix,
+  reconciliation PASS/FAIL/boundary fixtures, CI gates, observability wiring,
+  the security review, the runbook, and the go-live checklist (incl. the
+  peak-volume cost dry-run and the backfill + prod rollback drills).
+
+Then the human work: implement the stub bodies against the buildsheets
+(`make test` green), push the repo, `terraform apply`, deploy Dagster, run the
+drills. The harness scaffolds and plans; it executes nothing. See
+[`../../docs/process-overview.md`](../../docs/process-overview.md).
 
 ---
 

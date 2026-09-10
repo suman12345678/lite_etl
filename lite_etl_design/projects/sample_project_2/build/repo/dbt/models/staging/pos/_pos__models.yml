@@ -1,0 +1,10 @@
+version: 2
+models:
+  - name: stg_pos__txn
+    columns:
+      - name: txn_id      # TODO real key
+        tests: [not_null, unique]
+  - name: stg_pos__txn_line
+    columns:
+      - name: txn_line_id      # TODO real key
+        tests: [not_null, unique]

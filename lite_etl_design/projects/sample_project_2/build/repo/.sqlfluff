@@ -1,0 +1,7 @@
+[sqlfluff]
+templater = dbt
+dialect = databricks
+exclude_rules = RF04
+
+[sqlfluff:templater:dbt]
+project_dir = dbt

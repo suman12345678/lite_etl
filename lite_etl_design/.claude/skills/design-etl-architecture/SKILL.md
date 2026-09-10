@@ -1,6 +1,6 @@
 ---
 name: design-etl-architecture
-description: Run Phase 2 of the ETL data-harness design process - turn the Phase 1 requirement files into an architecture overview, an architecture diagram, a data-flow diagram, a data-entity (ER) diagram, component designs, a pipeline blueprint, design-decision records and a requirement-to-design traceability matrix, all written to the active project workspace's design/ folder. Use after requirements are gathered, or when the user runs "/design-architecture".
+description: Run Phase 2 of the ETL data-harness design process - turn the Phase 1 requirement files into an architecture overview, an architecture diagram, a data-flow diagram, a data-entity (ER) diagram, component designs, a transformation design (dbt project blueprint), a deployment & IaC design (Terraform + CI/CD), a pipeline blueprint, design-decision records and a requirement-to-design traceability matrix, all written to the active project workspace's design/ folder. Use after requirements are gathered, or when the user runs "/design-architecture".
 ---
 
 # design-etl-architecture  (Phase 2)
@@ -85,8 +85,9 @@ decisions and assumptions. Ask for corrections. Revise the files.
 ## Step 4 - Close out
 
 Update `<WS>/progress.json`: `phases.2_architecture.status`, `deliverables` =
-filenames written, `updated` = today, append a `history` entry. Tell the user
-Phase 3 (build & test) is the next step and is not built yet.
+filenames written, `updated` = today, append a `history` entry, set
+`active_phase` to `3_build_and_test`. Tell the user Phase 3
+(`/build-components`) is the next step.
 
 ## Guardrails
 

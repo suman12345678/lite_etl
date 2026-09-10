@@ -71,7 +71,7 @@ and every "use your judgement" assumption - is in
 ```
 sample_project/
 ├── project.json                 name, created date, which harness built it
-├── progress.json                phase tracker (1 & 2 complete; 3-5 planned)
+├── progress.json                phase tracker (1 & 2 complete; 3-5 not started)
 ├── README.md                    this file
 ├── intake/
 │   └── meridian-trust-rfp-extract.md      client's raw notes (the interview's starting point)
@@ -104,18 +104,21 @@ sample_project/
 
 ---
 
-## 5. What a real engagement would do next (not built by this harness yet)
+## 5. What comes next (run these with the harness)
 
-- **Step 3 - Build & test:** scaffold the components in `design/component-design.md`
-  (extractors, card parser, tokeniser, DQ engine, reconciliation engine, dbt
-  models) with unit tests against fixtures.
-- **Step 4 - Pipeline & Git:** Airflow DAGs, environment config, repo layout,
-  push.
-- **Step 5 - Full testing & hardening:** integration + contract tests, DQ
-  behaviour matrices, reconciliation fixtures, CI gates, observability wiring,
-  security review, runbook, backfill drill.
+This demo stops at Phase 2. The remaining harness steps run the same way:
 
-See [`../../docs/process-overview.md`](../../docs/process-overview.md).
+- **`/build-components` (Step 3):** scaffold the components in
+  `design/component-design.md` (extractors, card parser, tokeniser, DQ engine,
+  reconciliation engine, dbt models) with unit-test stubs against fixtures.
+- **`/assemble-pipeline` (Step 4):** Airflow DAGs, Terraform modules, environment
+  config, repo layout, CI/CD workflows - as skeletons. Then `/validate-config`.
+- **`/harden-pipeline` (Step 5):** integration + contract tests, the DQ
+  behaviour matrix, reconciliation fixtures, CI gates, observability wiring,
+  security review, runbook, backfill + rollback drills.
+
+The harness scaffolds and plans; running the tools and the drills stays a human
+step. See [`../../docs/process-overview.md`](../../docs/process-overview.md).
 
 > **Note:** this demo was built with an earlier version of the harness, before
 > the `10-platform-and-deployment` requirement area and the

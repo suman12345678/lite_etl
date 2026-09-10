@@ -1,0 +1,14 @@
+# prd overlay. Resource names come from Terraform via prd.generated.yml (Phase 4).
+env: prd
+catalog: northwind_prd
+storage:
+  landing_uri: "s3://northwind-prd-lakehouse/bronze"     # TODO confirm
+  inbound_uri: "s3://northwind-prd-inbound"
+  manifests_uri: "s3://northwind-prd-lakehouse/_manifests"
+  recon_uri: "s3://northwind-prd-lakehouse/_recon"
+secrets:
+  scope_prefix: "northwind/prd"
+  pii_salt_ref: "secret-scope://northwind/prd/pii#salt"
+lineage:
+  endpoint: ""        # TODO OpenLineage collector URL
+  namespace: "northwind_prd"

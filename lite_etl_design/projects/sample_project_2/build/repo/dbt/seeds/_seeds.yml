@@ -1,0 +1,6 @@
+version: 2
+seeds:
+  - name: currency_list
+    columns: [{name: currency, tests: [not_null, unique]}]
+  - name: channel_map
+    columns: [{name: channel, tests: [{accepted_values: {values: [web, store, wholesale]}}]}]

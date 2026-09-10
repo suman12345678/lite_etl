@@ -1,0 +1,14 @@
+# dev overlay. Resource names come from Terraform via dev.generated.yml (Phase 4).
+env: dev
+catalog: northwind_dev
+storage:
+  landing_uri: "s3://northwind-dev-lakehouse/bronze"     # TODO confirm
+  inbound_uri: "s3://northwind-dev-inbound"
+  manifests_uri: "s3://northwind-dev-lakehouse/_manifests"
+  recon_uri: "s3://northwind-dev-lakehouse/_recon"
+secrets:
+  scope_prefix: "northwind/dev"
+  pii_salt_ref: "secret-scope://northwind/dev/pii#salt"
+lineage:
+  endpoint: ""        # TODO OpenLineage collector URL
+  namespace: "northwind_dev"

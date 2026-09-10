@@ -30,6 +30,6 @@ promotes the same git SHA + dbt manifest dev -> stg -> prd.
 
 Phase 2 **complete**. 4 items are `partial` (24-month backfill depth, wholesale
 recognition grain + its GMV recon, peak-volume cost validation - each with a
-named follow-up). 3 open decisions (Q2/Q3/Q4) carried into build. Next in a real
-engagement: Phase 3 (build & test the extractors + the dbt project) - not part
-of this harness yet.
+named follow-up). 3 open decisions (Q2/Q3/Q4) carried into build. Phase 3
+(`/build-components`) is done - see [`../build/`](../build/). Next: Phase 4 -
+`/assemble-pipeline`.

@@ -3,13 +3,14 @@
 Start here. This page groups every file, shows the real flow, separates the main
 path from the helpers, and answers "where does my project live".
 
-> **Want to see a finished example?** Two full worked demos, each built with steps
-> 1 and 2, each with a `README.md` documenting exactly which commands were run:
+> **Want to see a finished example?** Two full worked demos, each with a
+> `README.md` documenting exactly which commands were run:
 > [`projects/sample_project/`](projects/sample_project/README.md) (banking client
 > "Meridian Trust", Snowflake + Airflow) and
 > [`projects/sample_project_2/`](projects/sample_project_2/README.md) (retailer
 > "Northwind Commerce", Databricks + dbt + Terraform + Dagster - exercises the
-> platform / transformation-framework / deployment area).
+> platform / transformation-framework / deployment area). Both were taken through
+> the design steps (1-2); the build steps (3-5) run the same way.
 
 ---
 
@@ -57,8 +58,26 @@ writes into the **active project workspace**, whose path is stored in one line i
         └──────────┬──────────┘           pipeline blueprint, decisions, traceability)
                    │              updates: <workspace>/progress.json  (phase 2 -> complete)
                    ▼
-        Steps 3-5 (build & test, pipeline & Git, hardening) - not built yet.
-        See docs/process-overview.md.
+        ┌─────────────────────┐   skill: build-etl-components
+        │ /build-components    │   reads: <workspace>/design/*
+        │                     │   writes: <workspace>/build/  (build-plan, per-component buildsheets,
+        │                     │           dbt-project-scaffold, fixtures-catalog, local-dev)
+        └──────────┬──────────┘   scaffolds: <workspace>/build/repo/  (dbt stubs, extractor stubs, unit tests)
+                   ▼
+        ┌─────────────────────┐   skill: assemble-etl-pipeline   (helper: /validate-config)
+        │ /assemble-pipeline   │   reads: <workspace>/design/* + build/*
+        │                     │   writes: <workspace>/pipeline/  (repo-layout, orchestration-wiring,
+        │                     │           iac-plan, cicd-plan, git-workflow, environments-and-config)
+        └──────────┬──────────┘   scaffolds: infra/ + orchestrator + .github/workflows/ in build/repo/
+                   ▼
+        ┌─────────────────────┐   skill: harden-etl-pipeline
+        │ /harden-pipeline     │   reads: <workspace>/requirements + design + build + pipeline
+        │                     │   writes: <workspace>/hardening/  (test-strategy, dq-behaviour-matrix,
+        │                     │           reconciliation-fixtures, integration-e2e-plan, ci-gates,
+        └──────────┬──────────┘           observability-wiring, security-review, runbook, go-live-checklist)
+                   ▼
+        hardening/go-live-checklist.md is the handoff. Running terraform / dbt /
+        deploys / tests / drills are human steps - the harness executes nothing.
 ```
 
 At any point: [`/etl-design-status`](.claude/commands/etl-design-status.md) tells
@@ -76,6 +95,9 @@ same summary automatically when you open Claude Code here.
 | `/etl-new-project <name\|path>` | [etl-new-project.md](.claude/commands/etl-new-project.md) | inline | `state/progress.template.json` | new `<workspace>/` + `state/active-workspace` |
 | `/gather-requirements [note]` | [gather-requirements.md](.claude/commands/gather-requirements.md) | skill [`gather-etl-requirements`](.claude/skills/gather-etl-requirements/SKILL.md) | `<ws>/intake/`, [`question-bank.md`](requirements/question-bank.md), [`requirements/templates/`](requirements/templates/) | `<ws>/requirements/*` , `<ws>/progress.json` |
 | `/design-architecture [focus]` | [design-architecture.md](.claude/commands/design-architecture.md) | skill [`design-etl-architecture`](.claude/skills/design-etl-architecture/SKILL.md) | `<ws>/requirements/*`, [`design/templates/`](design/templates/) | `<ws>/design/*` , `<ws>/progress.json` |
+| `/build-components [focus]` | [build-components.md](.claude/commands/build-components.md) | skill [`build-etl-components`](.claude/skills/build-etl-components/SKILL.md) | `<ws>/design/*`, [`build/templates/`](build/templates/) | `<ws>/build/*` + `<ws>/build/repo/` , `<ws>/progress.json` |
+| `/assemble-pipeline [focus]` | [assemble-pipeline.md](.claude/commands/assemble-pipeline.md) | skill [`assemble-etl-pipeline`](.claude/skills/assemble-etl-pipeline/SKILL.md) | `<ws>/design/* + build/*`, [`pipeline/templates/`](pipeline/templates/) | `<ws>/pipeline/*` + skeletons in `<ws>/build/repo/` , `<ws>/progress.json` |
+| `/harden-pipeline [focus]` | [harden-pipeline.md](.claude/commands/harden-pipeline.md) | skill [`harden-etl-pipeline`](.claude/skills/harden-etl-pipeline/SKILL.md) | `<ws>/requirements + design + build + pipeline`, [`hardening/templates/`](hardening/templates/) | `<ws>/hardening/*` , `<ws>/progress.json` |
 
 ### Auxiliary helpers (run any time, any number of times)
 
@@ -83,6 +105,7 @@ same summary automatically when you open Claude Code here.
 |---------|------|--------------|
 | `/etl-design-status` | [etl-design-status.md](.claude/commands/etl-design-status.md) | Short status block: active project, phase, what's done, what's missing, next command. Read-only. |
 | `/finalize-requirements` | [finalize-requirements.md](.claude/commands/finalize-requirements.md) | Re-run Phase 1 **Step 2 onward** only - rewrite the requirement files from notes / updated open-question answers, without the full interview. |
+| `/validate-config` | [validate-config.md](.claude/commands/validate-config.md) | Read-only gap report on the Phase 4 wiring (orchestration / IaC / CI-CD plans vs the design, the build, and the scaffold). |
 | `/etl-design-help` | [etl-design-help.md](.claude/commands/etl-design-help.md) | Briefing on the harness, phases, and your current next step (reads this MAP + README). |
 
 `/etl-new-project` is also a helper when pointed at an **existing** workspace: it
@@ -98,11 +121,17 @@ just switches the active project, scaffolding nothing.
 |------|------|------|
 | [`.claude/settings.json`](.claude/settings.json) | config | registers the SessionStart hook |
 | [`.claude/hooks/session_context.py`](.claude/hooks/session_context.py) | hook | prints active project + phase status at session start; never fails the session |
-| [`.claude/commands/`](.claude/commands/) ×6 | slash commands | thin entry points - see [section 3](#3-commands---main-path-vs-helpers) |
-| [`.claude/skills/gather-etl-requirements/SKILL.md`](.claude/skills/gather-etl-requirements/SKILL.md) | skill | the Phase 1 procedure (interactive interview) |
-| [`.claude/skills/design-etl-architecture/SKILL.md`](.claude/skills/design-etl-architecture/SKILL.md) | skill | the Phase 2 procedure (architecture + diagrams) |
-| [`.claude/agents/requirements-synthesizer.md`](.claude/agents/requirements-synthesizer.md) | subagent | optional - drafts Phase 1 files from notes (non-interactive) |
-| [`.claude/agents/solution-architect.md`](.claude/agents/solution-architect.md) | subagent | optional - drafts the Phase 2 design set (non-interactive) |
+| [`.claude/commands/`](.claude/commands/) ×10 | slash commands | thin entry points - see [section 3](#3-commands---main-path-vs-helpers) |
+| [`.claude/skills/gather-etl-requirements/SKILL.md`](.claude/skills/gather-etl-requirements/SKILL.md) | skill | Phase 1 - interactive requirements interview |
+| [`.claude/skills/design-etl-architecture/SKILL.md`](.claude/skills/design-etl-architecture/SKILL.md) | skill | Phase 2 - architecture + diagrams + dbt/IaC design |
+| [`.claude/skills/build-etl-components/SKILL.md`](.claude/skills/build-etl-components/SKILL.md) | skill | Phase 3 - build plan + buildsheets + repo scaffold |
+| [`.claude/skills/assemble-etl-pipeline/SKILL.md`](.claude/skills/assemble-etl-pipeline/SKILL.md) | skill | Phase 4 - orchestration wiring + IaC plan + CI/CD plan + skeletons |
+| [`.claude/skills/harden-etl-pipeline/SKILL.md`](.claude/skills/harden-etl-pipeline/SKILL.md) | skill | Phase 5 - tests, CI gates, observability, security review, runbook, go-live |
+| [`.claude/agents/requirements-synthesizer.md`](.claude/agents/requirements-synthesizer.md) | subagent | optional - drafts Phase 1 files (non-interactive) |
+| [`.claude/agents/solution-architect.md`](.claude/agents/solution-architect.md) | subagent | optional - drafts the Phase 2 design set |
+| [`.claude/agents/component-builder.md`](.claude/agents/component-builder.md) | subagent | optional - drafts Phase 3 buildsheets + scaffolds `build/repo/` |
+| [`.claude/agents/pipeline-assembler.md`](.claude/agents/pipeline-assembler.md) | subagent | optional - drafts the Phase 4 pipeline set + skeletons |
+| [`.claude/agents/hardening-planner.md`](.claude/agents/hardening-planner.md) | subagent | optional - drafts the Phase 5 hardening set |
 
 ### B. Shared Phase 1 inputs - [`requirements/`](requirements/) (harness, not per-project)
 
@@ -139,7 +168,45 @@ just switches the active project, scaffolding nothing.
 | [`design/templates/design-decisions.md`](design/templates/design-decisions.md) | ADR record format + typical decision list |
 | [`design/templates/traceability-matrix.md`](design/templates/traceability-matrix.md) | requirement -> design element coverage table |
 
-### D. Harness state - [`state/`](state/)
+### D. Shared Phase 3 templates - [`build/`](build/) (harness, not per-project)
+
+| File | Role |
+|------|------|
+| [`build/README.md`](build/README.md) | explains this folder |
+| [`build/templates/build-plan.md`](build/templates/build-plan.md) | component build order, "component complete" definition, local-run summary, CI hook |
+| [`build/templates/component-buildsheet.md`](build/templates/component-buildsheet.md) | per component: design refs, files, interface, config keys, unit-test table, fixtures, done checklist |
+| [`build/templates/dbt-project-scaffold.md`](build/templates/dbt-project-scaffold.md) | dbt tree to create + model/test/snapshot/seed -> design-section map + macros + run targets |
+| [`build/templates/fixtures-catalog.md`](build/templates/fixtures-catalog.md) | per source: sample / empty / late / duplicate / drift / bad-rows / partial fixtures + golden outputs + recon fixtures |
+| [`build/templates/local-dev.md`](build/templates/local-dev.md) | prereqs, task-runner targets, how each source is faked locally, the dev loop |
+
+### E. Shared Phase 4 templates - [`pipeline/`](pipeline/) (harness, not per-project)
+
+| File | Role |
+|------|------|
+| [`pipeline/README.md`](pipeline/README.md) | explains this folder |
+| [`pipeline/templates/repo-layout.md`](pipeline/templates/repo-layout.md) | the repo tree, ownership, generated-vs-authored, how `build/repo/` becomes the real repo |
+| [`pipeline/templates/orchestration-wiring.md`](pipeline/templates/orchestration-wiring.md) | design task -> component -> orchestrator unit; triggers; retries; the reconciliation gate; backfill entrypoint |
+| [`pipeline/templates/iac-plan.md`](pipeline/templates/iac-plan.md) | Terraform module tree, per-module resource inventory, state backend bootstrap, apply order, per-env vars |
+| [`pipeline/templates/cicd-plan.md`](pipeline/templates/cicd-plan.md) | `pr` / `main` / `promote` workflows, gates, promotion rules, secrets/OIDC, branch protection |
+| [`pipeline/templates/git-workflow.md`](pipeline/templates/git-workflow.md) | branch model, PR rules, pre-commit hooks, versioning, CODEOWNERS, first-push |
+| [`pipeline/templates/environments-and-config.md`](pipeline/templates/environments-and-config.md) | env matrix, config layering, promotion, drift detection, config-keys inventory |
+
+### F. Shared Phase 5 templates - [`hardening/`](hardening/) (harness, not per-project)
+
+| File | Role |
+|------|------|
+| [`hardening/README.md`](hardening/README.md) | explains this folder |
+| [`hardening/templates/test-strategy.md`](hardening/templates/test-strategy.md) | the test pyramid, coverage targets, test environments, what gates merge vs deploy vs promote |
+| [`hardening/templates/dq-behaviour-matrix.md`](hardening/templates/dq-behaviour-matrix.md) | every DQ rule x input scenario -> expected routing (pass / warn / quarantine / fail) |
+| [`hardening/templates/reconciliation-fixtures.md`](hardening/templates/reconciliation-fixtures.md) | per recon check: PASS / FAIL / boundary fixture + expected gate action |
+| [`hardening/templates/integration-e2e-plan.md`](hardening/templates/integration-e2e-plan.md) | integration + contract + end-to-end scenarios, stubbed-vs-real, runtime budget |
+| [`hardening/templates/ci-gates.md`](hardening/templates/ci-gates.md) | merge / deploy / promote gates, branch protection, nightly suite, security + IaC scans |
+| [`hardening/templates/observability-wiring.md`](hardening/templates/observability-wiring.md) | metrics / logs / dashboards / alert rules mapped to 07/09, SLOs, healthy definition |
+| [`hardening/templates/security-review.md`](hardening/templates/security-review.md) | the 08 checklist walked against the build, findings table, sign-off |
+| [`hardening/templates/runbook.md`](hardening/templates/runbook.md) | normal day, common failures + fixes, backfill procedure, rollback procedure, escalation |
+| [`hardening/templates/go-live-checklist.md`](hardening/templates/go-live-checklist.md) | readiness items, drills (backfill / rollback / failure / DR), cutover steps, go-live rollback plan, sign-offs |
+
+### G. Harness state - [`state/`](state/)
 
 | File | Role |
 |------|------|
@@ -147,7 +214,7 @@ just switches the active project, scaffolding nothing.
 | `state/active-workspace` | one line: path of the current project (git-ignored, machine-local) |
 | [`state/progress.template.json`](state/progress.template.json) | starting `progress.json` copied into each new workspace |
 
-### E. Docs
+### H. Docs
 
 | File | Role |
 |------|------|
@@ -155,7 +222,7 @@ just switches the active project, scaffolding nothing.
 | [`MAP.md`](MAP.md) | this page |
 | [`docs/process-overview.md`](docs/process-overview.md) | all five steps and what each produces |
 
-### F. A project workspace (created by `/etl-new-project`) - *not* in the harness
+### I. A project workspace (created by `/etl-new-project`) - *not* in the harness
 
 ```
 <workspace>/
@@ -166,6 +233,12 @@ just switches the active project, scaffolding nothing.
 ├── requirements/          Phase 1 deliverables: 00..10 + README + 99-open-questions
 ├── design/                Phase 2 deliverables: overview + diagrams + components +
 │                          transformation-design + deployment-and-iac + ...
+├── build/                 Phase 3: build-plan + buildsheets + fixtures + local-dev
+│   └── repo/              scaffolded starter repo (dbt stubs, extractor stubs, tests,
+│                          then infra/ + orchestrator + CI skeletons from Phase 4)
+├── pipeline/              Phase 4: repo-layout + orchestration + IaC + CI/CD + git + envs
+├── hardening/             Phase 5: test-strategy + DQ matrix + recon fixtures + CI gates
+│                          + observability + security-review + runbook + go-live-checklist
 └── notes/                 optional interview transcripts / scratch
 ```
 
@@ -176,9 +249,9 @@ just switches the active project, scaffolding nothing.
 | Building block | Where | Triggered by | Can talk to you? | Used here for |
 |---------------|-------|--------------|------------------|---------------|
 | **Slash command** | `.claude/commands/*.md` | you type `/name` | n/a (it's just a prompt) | thin entry points that invoke a skill and pass your focus note |
-| **Skill** | `.claude/skills/<name>/SKILL.md` | a command, or you describing the task | yes (runs on the main thread) | the actual Phase 1 / Phase 2 procedures - what to read, ask, write |
-| **Tool** | built in | a skill, while running | `AskUserQuestion` does | `Read`/`Write`/`Edit`/`Glob`/`Grep`/`Bash` + `AskUserQuestion` for the interview's multiple-choice parts. No custom tools, no MCP server - the job is reading answers and writing Markdown. |
-| **Subagent** | `.claude/agents/*.md` | a skill choosing to delegate | **no** - runs autonomously, returns a summary | optional heavy drafting only (`requirements-synthesizer`, `solution-architect`); never the interview |
+| **Skill** | `.claude/skills/<name>/SKILL.md` | a command, or you describing the task | yes (runs on the main thread) | one procedure per phase (1-5) - what to read, ask, write, scaffold |
+| **Tool** | built in | a skill, while running | `AskUserQuestion` does | `Read`/`Write`/`Edit`/`Glob`/`Grep`/`Bash` + `AskUserQuestion` for the interview's multiple-choice parts. No custom tools, no MCP server - the job is reading answers, writing Markdown, and scaffolding skeleton files (Phases 3-4). It runs nothing (`terraform`, `dbt`, deploys, `git push`, tests are human steps). |
+| **Subagent** | `.claude/agents/*.md` | a skill choosing to delegate | **no** - runs autonomously, returns a summary | optional heavy drafting only (`requirements-synthesizer`, `solution-architect`, `component-builder`, `pipeline-assembler`, `hardening-planner`); never the interview |
 | **Hook** | `.claude/settings.json` -> `hooks/session_context.py` | automatically, at session start | no (prints text) | the one-line status banner |
 
 Rule of thumb: **commands** are the door, **skills** are the method, **tools**
@@ -219,6 +292,9 @@ so you can move it, zip it, or commit it to a different repo freely.
 | Feed in a spec I already have | drop it in `<workspace>/intake/` before `/gather-requirements` |
 | I answered some open questions | edit `<workspace>/requirements/99-open-questions.md`, then `/finalize-requirements` |
 | Move on to architecture | `/design-architecture` |
+| Scaffold the components + dbt project | `/build-components` (after Phase 2) |
+| Wire the orchestrator + IaC + CI/CD | `/assemble-pipeline` (after Phase 3), then `/validate-config` |
+| Add tests, gates, runbook, go-live | `/harden-pipeline` (after Phase 4) |
 | Tweak a diagram visually | copy the ```mermaid block into mermaid.live |
 | Change how a phase works | edit the `SKILL.md`, not the command |
-| Add step 3+ | ask - same pattern: skill + command + optional subagent + templates + a phase in `progress.template.json` |
+| Add a step 6 | ask - same pattern: skill + command + optional subagent + a `<step>/templates/` folder + a phase in `progress.template.json` |

@@ -1,0 +1,6 @@
+version: 2
+models:
+  - name: dim_customer_pii
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: customer_sk   # TODO real key/tests per requirements/04

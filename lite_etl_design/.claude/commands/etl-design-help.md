@@ -10,13 +10,18 @@ concise briefing:
 
 - The harness vs a project workspace, and that a project can live in a subfolder
   (`projects/<name>/`) or any other folder on disk.
-- The step-by-step process and which steps are built today (1 and 2) vs planned.
+- The five-step process, all now built:
+  1 requirements, 2 architecture, 3 build & test components, 4 pipeline & Git,
+  5 full testing & hardening - what each produces and where it lands
+  (`<workspace>/requirements|design|build|pipeline|hardening/`).
 - The main-flow commands in order (`/etl-new-project` -> `/gather-requirements`
-  -> `/design-architecture`) and the auxiliary helpers
-  (`/etl-design-status`, `/finalize-requirements`, `/etl-design-help`).
+  -> `/design-architecture` -> `/build-components` -> `/assemble-pipeline` ->
+  `/harden-pipeline`) and the helpers (`/etl-design-status`,
+  `/finalize-requirements`, `/validate-config`, `/etl-design-help`).
+- That Phases 3-5 scaffold skeletons and write plans - they never execute
+  anything (no `terraform apply`, no deploy, no `git push`, no test runs);
+  those are human steps.
 - The difference between a skill, a subagent, a slash command and the
   SessionStart hook in this harness, and when each runs.
-- Where I put inputs (`<workspace>/intake/`) and where deliverables land
-  (`<workspace>/requirements/`, `<workspace>/design/`).
 - The exact next command for my current state (check `state/active-workspace`
   then `<workspace>/progress.json`).

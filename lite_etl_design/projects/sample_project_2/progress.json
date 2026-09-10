@@ -3,7 +3,7 @@
   "workspace_path": "projects/sample_project_2",
   "created": "2026-09-09",
   "updated": "2026-09-09",
-  "active_phase": "3_build_and_test",
+  "active_phase": "4_pipeline_and_git",
   "phases": {
     "1_requirements": {
       "status": "complete",
@@ -44,15 +44,37 @@
       ],
       "notes": "Design produced 2026-09-09. ELT on Databricks (bronze/silver/gold Delta), dbt Core + dbt-databricks, Terraform (databricks/aws/google providers), Dagster orchestration, GitHub Actions CI/CD with plan/apply + dbt build + manual promotion. Hard reconciliation gate as a Dagster asset check. 3 open design decisions carried into build."
     },
-    "3_build_and_test": { "status": "planned", "notes": "Not built by this harness yet - would be Phase 3: scaffold extractors + the dbt project + tests." },
-    "4_pipeline_and_git": { "status": "planned" },
-    "5_full_testing_and_hardening": { "status": "planned" }
+    "3_build_and_test": {
+      "status": "complete",
+      "owner_skill": "build-etl-components",
+      "deliverables": [
+        "build-plan.md",
+        "component-buildsheet-config.md",
+        "component-buildsheet-secrets.md",
+        "component-buildsheet-extractor.md",
+        "component-buildsheet-landing.md",
+        "component-buildsheet-dbt-runner.md",
+        "component-buildsheet-reconciliation.md",
+        "component-buildsheet-publisher.md",
+        "component-buildsheet-lineage.md",
+        "component-buildsheet-observability.md",
+        "dbt-project-scaffold.md",
+        "fixtures-catalog.md",
+        "local-dev.md",
+        "README.md",
+        "repo/ (152 files scaffolded)"
+      ],
+      "notes": "Build plan (9 components, lowest-dependency-first) + one buildsheet per component + dbt-project-scaffold + fixtures-catalog + local-dev guide. Scaffolded build/repo/ (152 files): Python 3.12 extractors for the 6 sources + common/ (config, state, secrets, landing, manifest, base, http, dbt_runner); recon/ publish/ lineage/ obs/; the dbt project (39 model stubs across staging/intermediate/marts + 4 snapshots + 5 seeds + 5 macros + 5 tests) with a DuckDB ci target; 14 skipped unit-test stubs; tiny synthetic fixtures; Makefile + pyproject + pre-commit. Stubs + TODO bodies only - Python compiles, dbt/config YAML parses. 4 open items (O1-O4); O2/O3 tied to Q3/Q4."
+    },
+    "4_pipeline_and_git": { "status": "not_started", "owner_skill": "assemble-etl-pipeline", "deliverables": [], "notes": "Next: /assemble-pipeline - Dagster asset graph, Terraform modules per env, GitHub Actions, wire make test into CI." },
+    "5_full_testing_and_hardening": { "status": "not_started", "owner_skill": "harden-etl-pipeline", "deliverables": [] }
   },
   "history": [
     { "date": "2026-09-09", "phase": "0", "event": "/etl-new-project sample_project_2 - workspace scaffolded" },
     { "date": "2026-09-09", "phase": "1_requirements", "event": "intake doc dropped: northwind-commerce-discovery.md" },
     { "date": "2026-09-09", "phase": "1_requirements", "event": "/gather-requirements - interview across 11 areas, 13 files written, 5 open questions" },
     { "date": "2026-09-09", "phase": "1_requirements", "event": "/finalize-requirements - Q1 and Q5 answered, files refreshed (00, 08, 10, 99 to v1.1)" },
-    { "date": "2026-09-09", "phase": "2_architecture", "event": "/design-architecture - 11 design files written incl. 4 mermaid diagrams, transformation-design.md and deployment-and-iac.md" }
+    { "date": "2026-09-09", "phase": "2_architecture", "event": "/design-architecture - 11 design files written incl. 4 mermaid diagrams, transformation-design.md and deployment-and-iac.md" },
+    { "date": "2026-09-09", "phase": "3_build_and_test", "event": "/build-components - 14 build docs + build/repo/ scaffold (152 files: 6 extractors, dbt project with 39 model stubs, recon/publish/lineage/obs, 14 unit-test stubs, fixtures). Stubs + TODOs only." }
   ]
 }

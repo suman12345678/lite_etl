@@ -48,7 +48,8 @@ def main() -> None:
     print(
         "[lite-etl-design] Step-by-step ETL data-harness design. "
         "Commands: /etl-new-project /gather-requirements /finalize-requirements "
-        "/design-architecture /etl-design-status /etl-design-help  |  see MAP.md"
+        "/design-architecture /build-components /assemble-pipeline "
+        "/validate-config /harden-pipeline /etl-design-status /etl-design-help  |  see MAP.md"
     )
 
     ws = _resolve_workspace()

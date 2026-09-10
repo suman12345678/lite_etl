@@ -18,9 +18,24 @@
       "deliverables": [],
       "notes": "Reads phase 1 output, writes <workspace>/design/*.md incl. mermaid diagrams, transformation-design.md (dbt) and deployment-and-iac.md (Terraform + CI/CD)"
     },
-    "3_build_and_test": { "status": "planned", "notes": "Scaffold components + the dbt project (models, snapshots, tests) with unit tests against fixtures" },
-    "4_pipeline_and_git": { "status": "planned", "notes": "Orchestrator pipelines + Terraform modules per env + CI/CD (plan/apply + dbt build) + repo push" },
-    "5_full_testing_and_hardening": { "status": "planned", "notes": "Integration/contract tests, CI gates, drift detection, observability, security review, backfill + rollback drills" }
+    "3_build_and_test": {
+      "status": "not_started",
+      "owner_skill": "build-etl-components",
+      "deliverables": [],
+      "notes": "Reads phase 2 design, writes <workspace>/build/*.md (build plan + per-component buildsheets + fixtures catalog + local-dev guide) and scaffolds the starter repo tree under <workspace>/build/repo/ (dbt project, extractor stubs, unit tests). Config-driven, one component at a time."
+    },
+    "4_pipeline_and_git": {
+      "status": "not_started",
+      "owner_skill": "assemble-etl-pipeline",
+      "deliverables": [],
+      "notes": "Reads phases 2-3, writes <workspace>/pipeline/*.md (repo layout, orchestration wiring, Terraform IaC plan, CI/CD plan, git workflow, environments & config) and scaffolds infra/ + orchestrator + .github/workflows/ skeletons. /validate-config checks the wiring."
+    },
+    "5_full_testing_and_hardening": {
+      "status": "not_started",
+      "owner_skill": "harden-etl-pipeline",
+      "deliverables": [],
+      "notes": "Reads phases 2-4, writes <workspace>/hardening/*.md (test strategy, DQ behaviour matrix, reconciliation fixtures, CI gates, observability wiring, security review, runbook, go-live checklist incl. backfill + rollback drills)."
+    }
   },
   "history": []
 }

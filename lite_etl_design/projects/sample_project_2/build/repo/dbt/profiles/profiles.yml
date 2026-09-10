@@ -1,0 +1,16 @@
+# Phase 3: `ci` is used by `make dbt-ci`. dev/stg/prd filled by CI-injected env in Phase 4.
+northwind:
+  target: ci
+  outputs:
+    ci:
+      type: duckdb
+      path: "../.local_state/northwind_ci.duckdb"
+      schema: main
+    dev:
+      type: databricks
+      catalog: "northwind_dev"       # TODO
+      schema: "gold"
+      host: "{{ env_var('DBX_HOST') }}"
+      http_path: "{{ env_var('DBX_HTTP_PATH') }}"
+      token: "{{ env_var('DBX_TOKEN') }}"
+      threads: 4

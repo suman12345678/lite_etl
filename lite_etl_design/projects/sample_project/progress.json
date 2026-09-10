@@ -41,9 +41,9 @@
       ],
       "notes": "Design produced 2026-09-03. ELT/ETL split, Snowflake 3-zone model, Airflow. 3 open design decisions carried into build."
     },
-    "3_build_and_test": { "status": "planned", "notes": "Not built by this harness yet - would be Phase 3." },
-    "4_pipeline_and_git": { "status": "planned" },
-    "5_full_testing_and_hardening": { "status": "planned" }
+    "3_build_and_test": { "status": "not_started", "owner_skill": "build-etl-components", "deliverables": [], "notes": "Next: /build-components." },
+    "4_pipeline_and_git": { "status": "not_started", "owner_skill": "assemble-etl-pipeline", "deliverables": [] },
+    "5_full_testing_and_hardening": { "status": "not_started", "owner_skill": "harden-etl-pipeline", "deliverables": [] }
   },
   "history": [
     { "date": "2026-09-03", "phase": "0", "event": "/etl-new-project sample_project - workspace scaffolded" },

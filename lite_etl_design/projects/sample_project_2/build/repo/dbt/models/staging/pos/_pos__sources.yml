@@ -1,0 +1,11 @@
+version: 2
+sources:
+  - name: pos
+    schema: bronze
+    loaded_at_field: _extracted_at
+    freshness:
+      warn_after: {count: 6, period: hour}    # TODO tune per requirements/01 cadence
+      error_after: {count: 12, period: hour}
+    tables:
+      - name: txn   # TODO columns from requirements/01
+      - name: txn_line   # TODO columns from requirements/01

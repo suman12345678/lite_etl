@@ -1,0 +1,11 @@
+# Local / CI target: DuckDB, fixtures as bronze, no cloud.
+env: ci
+catalog: duckdb
+storage:
+  landing_uri: ".local_state/bronze"
+  inbound_uri: "tests/fixtures"
+  manifests_uri: ".local_state/_manifests"
+  recon_uri: ".local_state/_recon"
+secrets:
+  scope_prefix: "northwind/ci"
+  pii_salt_ref: "secret-scope://northwind/ci/pii#salt"

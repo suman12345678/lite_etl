@@ -1,0 +1,10 @@
+.venv/
+.local_state/
+*.duckdb
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+.env
+__pycache__/
+.pytest_cache/
+.coverage

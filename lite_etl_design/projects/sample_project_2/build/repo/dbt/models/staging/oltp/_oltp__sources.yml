@@ -1,0 +1,13 @@
+version: 2
+sources:
+  - name: oltp
+    schema: bronze
+    loaded_at_field: _extracted_at
+    freshness:
+      warn_after: {count: 6, period: hour}    # TODO tune per requirements/01 cadence
+      error_after: {count: 12, period: hour}
+    tables:
+      - name: customers   # TODO columns from requirements/01
+      - name: products   # TODO columns from requirements/01
+      - name: orders   # TODO columns from requirements/01
+      - name: order_lines   # TODO columns from requirements/01

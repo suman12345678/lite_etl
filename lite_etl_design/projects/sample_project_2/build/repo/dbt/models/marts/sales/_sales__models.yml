@@ -1,0 +1,22 @@
+version: 2
+models:
+  - name: fct_order
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: order_id   # TODO real key/tests per requirements/04
+  - name: fct_order_line
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: order_id   # TODO real key/tests per requirements/04
+  - name: fct_refund
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: order_id   # TODO real key/tests per requirements/04
+  - name: agg_sales_daily
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: order_id   # TODO real key/tests per requirements/04
+  - name: agg_customer_monthly
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: order_id   # TODO real key/tests per requirements/04

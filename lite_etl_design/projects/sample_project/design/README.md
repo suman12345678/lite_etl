@@ -25,5 +25,5 @@ blocks publish and column-level lineage into DataHub.
 ## Status
 
 Phase 2 **complete**. 3 items are `partial` (cost validation, sub-ledger tie-out,
-BCBS 239 constraints - all with a named follow-up). Next in a real engagement:
-Phase 3 (build & test the components) - not part of this harness yet.
+BCBS 239 constraints - all with a named follow-up). Next: Phase 3 -
+`/build-components`.

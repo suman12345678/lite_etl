@@ -1,0 +1,6 @@
+version: 2
+models:
+  - name: stg_fx__rate
+    columns:
+      - name: rate_id      # TODO real key
+        tests: [not_null, unique]

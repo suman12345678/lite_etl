@@ -1,0 +1,13 @@
+version: 2
+sources:
+  - name: sfdc
+    schema: bronze
+    loaded_at_field: _extracted_at
+    freshness:
+      warn_after: {count: 6, period: hour}    # TODO tune per requirements/01 cadence
+      error_after: {count: 12, period: hour}
+    tables:
+      - name: account   # TODO columns from requirements/01
+      - name: contact   # TODO columns from requirements/01
+      - name: opportunity   # TODO columns from requirements/01
+      - name: opportunity_line   # TODO columns from requirements/01

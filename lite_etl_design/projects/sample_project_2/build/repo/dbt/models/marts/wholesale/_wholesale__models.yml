@@ -1,0 +1,6 @@
+version: 2
+models:
+  - name: fct_wholesale_opportunity
+    description: "TODO - from requirements/03 glossary"
+    columns:
+      - name: order_id   # TODO real key/tests per requirements/04

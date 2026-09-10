@@ -1,0 +1,14 @@
+version: 2
+models:
+  - name: stg_shopify__orders
+    columns:
+      - name: orders_id      # TODO real key
+        tests: [not_null, unique]
+  - name: stg_shopify__refunds
+    columns:
+      - name: refunds_id      # TODO real key
+        tests: [not_null, unique]
+  - name: stg_shopify__fulfillments
+    columns:
+      - name: fulfillments_id      # TODO real key
+        tests: [not_null, unique]

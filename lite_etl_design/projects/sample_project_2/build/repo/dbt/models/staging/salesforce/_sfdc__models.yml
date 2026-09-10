@@ -1,0 +1,18 @@
+version: 2
+models:
+  - name: stg_sfdc__account
+    columns:
+      - name: account_id      # TODO real key
+        tests: [not_null, unique]
+  - name: stg_sfdc__contact
+    columns:
+      - name: contact_id      # TODO real key
+        tests: [not_null, unique]
+  - name: stg_sfdc__opportunity
+    columns:
+      - name: opportunity_id      # TODO real key
+        tests: [not_null, unique]
+  - name: stg_sfdc__opportunity_line
+    columns:
+      - name: opportunity_line_id      # TODO real key
+        tests: [not_null, unique]

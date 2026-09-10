@@ -33,10 +33,9 @@ infra/
     orchestrator/     # the tool from area 07
     observability/    # dashboards, alert routes
     ci/               # OIDC roles, runner perms
-  envs/
-    dev/   main.tf  variables.tf  <env>.tfvars  backend.tf
-    test/  ...
-    prod/  ...
+  envs/                 # one dir per canonical env name (state the list - e.g. dev, stg, prd)
+    <env>/ main.tf  variables.tf  <env>.tfvars  backend.tf
+    ...
 ```
 
 - **Own modules vs registry modules:** _choice_
@@ -106,11 +105,14 @@ flowchart LR
 
 ## 8. Environment topology
 
+- **Canonical environment names** (from `requirements/10`, used verbatim by
+  Phases 3-5): _e.g. `dev, stg, prd`_
+- **Primary region:** _(from `requirements/02`; the DR/replica region is
+  separate and never reused as primary)_
+
 | Env | Warehouse account / workspace | Catalog / database | Compute | Access | Network |
 |-----|-------------------------------|--------------------|---------|--------|---------|
-| dev | | | | | |
-| test | | | | | |
-| prod | | | | | |
+| _(row per canonical env name)_ | | | | | |
 
 ## 9. Open questions
 

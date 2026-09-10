@@ -22,6 +22,7 @@ Install: `make setup` (creates `.venv` via `uv`, installs
 
 | Target | Does |
 |--------|------|
+| `make demo` / `demo-good` / `demo-fixed` / `demo-fail` | **runnable** DuckDB walking-skeleton: load → DQ quarantine → reconciliation gate → publish. No cloud/dbt/Dagster. See `build/repo/DEMO.md`. |
 | `make setup` | install everything |
 | `make lint` | `ruff` + `sqlfluff` + `mypy` |
 | `make test` | all unit tests + `dbt build --target ci` on fixtures |

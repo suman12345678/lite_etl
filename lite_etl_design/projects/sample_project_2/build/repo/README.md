@@ -1,9 +1,13 @@
 # northwind-data (scaffold)
 
 Starter repo scaffolded by the lite-etl-design harness, Phase 3
-(`/build-components`) from `../../design/`. **Stubs only** - every model body
-and extractor `run()` is a `TODO`. See `../build-plan.md` for the build order
-and one buildsheet per component.
+(`/build-components`) from `../../design/`. Most component bodies are still
+`TODO` — see `../build-plan.md` for the build order and one buildsheet per
+component.
+
+**Want to see it work?** `make demo` — a real, runnable DuckDB slice
+(load → data-quality quarantine → reconciliation gate → publish) with no cloud.
+See [`DEMO.md`](DEMO.md).
 
 ```
 extractors/   Python: 6 source modules + common/ (config, state, secrets, landing, manifest, base, http, dbt_runner)
@@ -16,7 +20,8 @@ config/       defaults.yml + <env>.yml
 tests/        unit/ + fixtures/ + golden/
 ```
 
-Phase 4 (`/assemble-pipeline`) adds `infra/`, `dagster/`, `.github/workflows/`.
+Phase 4 (`/assemble-pipeline`) adds `infra/`, `northwind_dagster/`, `.github/workflows/`.
+`demo/` is the runnable walking-skeleton slice (`make demo`).
 
 ## Local
 

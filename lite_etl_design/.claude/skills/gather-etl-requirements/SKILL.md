@@ -94,6 +94,7 @@ responsible for a final read-through with the user.
    - `phases.1_requirements.status` = `"complete"` (or `"in_progress"` if you
      stopped early), `deliverables` = the filenames you wrote,
      `open_questions_count` = N,
+   - `active_phase` = `"2_architecture"`,
    - append a `history` entry `{ "date": ..., "phase": "1_requirements", "event": "..." }`.
 2. Tell the user: what you captured, the biggest open questions, and that
    `/design-architecture` is the next step (Phase 2).

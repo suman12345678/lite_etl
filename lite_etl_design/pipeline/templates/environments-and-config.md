@@ -6,7 +6,7 @@
 
 ## Environment matrix
 
-| | dev | test / UAT | prod |
+| | _(one column per canonical env in `requirements/10`, e.g. dev, stg, prd)_ | | |
 |---|-----|-----------|------|
 | Warehouse account / workspace | | | |
 | Catalog / database | | | |

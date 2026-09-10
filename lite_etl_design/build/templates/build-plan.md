@@ -12,11 +12,14 @@
 
 ## 1. Build order
 
-Build one component at a time, lowest dependency first. Each must pass its unit
-tests against fixtures before the next starts.
+Build the **walking skeleton (Component 0)** first - it is the only part of
+Phase 3 with real bodies and it de-risks the whole design by proving one source
+runs end to end. Then build the rest one component at a time, lowest dependency
+first; each must pass its unit tests against fixtures before the next starts.
 
 | # | Component | Depends on | Design ref | Buildsheet |
 |---|-----------|-----------|-----------|-----------|
+| 0 | **Walking skeleton** - one source: extract/load -> raw -> transform -> one DQ quarantine -> reconcile -> published `gold` table, all with real (small) bodies on DuckDB | - | `demo-harness.md`; `05`; `04` | `build/repo/DEMO.md` + `demo/` |
 | 1 | State store / config loader | - | component-design | `component-buildsheet-statestore.md` |
 | 2 | Secrets resolver | 1 | component-design; 08 | ... |
 | 3 | Extractor: `<source>` (repeat per source) | 1, 2 | component-design; 01 | ... |
@@ -47,11 +50,17 @@ A component is done when **all** hold:
 
 ## 3. Local run
 
-- **Prereqs:** _language runtime, dbt + adapter (+ `dbt-duckdb` for tests), task
-  runner_
+- **Prereqs:** _language runtime, DuckDB, dbt + adapter (+ `dbt-duckdb` for
+  tests), task runner_
+- **See it work:** `<task> demo` / `<task> demo-fail` - the walking-skeleton
+  slice (load -> DQ quarantine -> reconciliation gate -> publish/block). See
+  `build/repo/DEMO.md`.
 - **One-liner per component:** see `local-dev.md`
-- **Full local pass:** `<task runner> test` runs every component's unit tests +
-  `dbt build` against DuckDB with fixtures. Must be green before Phase 4.
+- **Scaffold gate (entry to Phase 4):** every source file compiles, every YAML /
+  `dbt parse` is clean, `<task> demo` and `<task> demo-fail` behave, and
+  `pytest tests/unit/test_demo.py` is green. The remaining component bodies are
+  `TODO` and are implemented against their buildsheets (§2) between Phase 3 and a
+  real pipeline run - Phases 4-5 can be scaffolded in parallel with that work.
 
 ## 4. CI hook (handed to Phase 4)
 

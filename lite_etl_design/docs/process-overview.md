@@ -64,9 +64,20 @@ scaffold doc, a fixtures catalog and a local-dev guide - and scaffolds a starter
 repo under `<workspace>/build/repo/`: the dbt project with stub models /
 snapshots / seeds / `sources.yml`, extractor stubs with real signatures,
 unit-test stubs, tiny synthetic fixtures, a task-runner file. Stubs and `TODO`s
-only; local tests run on DuckDB / mocks, no cloud.
+**except the walking-skeleton slice** (`demo/`, `DEMO.md`): one source driven
+end to end - load -> transform -> a DQ rule that quarantines a bad row ->
+reconciliation gate -> published `gold` table - which runs on DuckDB with
+`<task> demo`, no cloud, no dbt, no orchestrator.
 
-**Output:** `<workspace>/build/*.md` + `<workspace>/build/repo/`.
+**Output:** `<workspace>/build/*.md` + `<workspace>/build/repo/` (with a runnable
+`make demo`).
+
+### Between Step 3 and Step 4 - implement the stubs
+
+The scaffold is not a running pipeline. Implement each component body against its
+buildsheet until `<task> test` is green (`build-plan.md` §2 is the per-component
+definition of done). Steps 4-5 can be scaffolded in parallel with this work, but
+the pipeline only runs for real once the component bodies exist.
 
 ## Step 4 - Pipeline & Git  *(built)*
 

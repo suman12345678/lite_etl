@@ -18,10 +18,9 @@ infra/
     orchestrator/    # the tool from 07 (agent / cluster / service)
     observability/   # dashboards, alarms, alert routes
     ci/              # OIDC role(s), runner permissions
-  envs/
-    dev/   backend.tf  main.tf  dev.tfvars
-    test/  ...
-    prod/  ...
+  envs/                        # one dir per canonical env name in requirements/10
+    <env>/ backend.tf  main.tf  <env>.tfvars
+    ...
 ```
 
 ## Resource inventory (per module)
@@ -50,7 +49,7 @@ infra/
 
 ## Per-env variables
 
-| Variable | dev | test | prod |
+| Variable | _(column per canonical env, e.g. dev / stg / prd)_ | | |
 |----------|-----|------|------|
 | region / account | | | |
 | compute size | | | |

@@ -77,6 +77,25 @@ For the heavy synthesis you may delegate to the `solution-architect` subagent:
 pass it `<WS>` and this template list, have it return drafts, then review and
 land them yourself. Keep the interactive review on the main thread.
 
+## Step 2.5 - Verify coverage and consistency (do not skip)
+
+Before the review, check your own output and fix any miss:
+
+- **All 11 deliverables** exist in `<WS>/design/` and are non-empty.
+- **Every `<WS>/requirements/*.md`** appears in `traceability-matrix.md` with at
+  least one row; every `covered` row cites a `design/` file that exists; every
+  `partial` / `deferred` row names a `99-open-questions.md` Q#.
+- **Every Mermaid block** is well-formed (```mermaid fence, balanced, parses).
+- **Names are consistent**: entity/column names in `data-entity-diagram.md`
+  match `requirements/02` + `03`; the component count in
+  `architecture-overview.md` §2 matches `component-design.md`; the "state store /
+  watermarks" component appears in both; the primary cloud region matches
+  `requirements/02` and is not the DR region from `09`.
+- **Canonical env names** (e.g. `dev, stg, prd`) are stated once in
+  `deployment-and-iac.md` §8 and used consistently.
+
+List what you checked and any fixes in the Step 3 review.
+
 ## Step 3 - Review with the user
 
 Present: the approach in a few sentences, the diagrams, and the top design

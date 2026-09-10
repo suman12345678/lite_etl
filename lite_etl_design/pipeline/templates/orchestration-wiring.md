@@ -6,7 +6,8 @@
 
 - **Orchestrator:** Airflow / Dagster / Prefect / Databricks Workflows / ...
 - **Deployment:** how pipeline code is deployed (image / code-location / bundle)
-- **Repo path:** `<orchestrator>/`
+- **Repo path:** `<orchestrator>/` - `dags/` (Airflow), `<project>_dagster/`
+  (Dagster - **never a bare `dagster/`**, it shadows the library), `flows/` (Prefect)
 
 ## Pipeline: `<name>`
 

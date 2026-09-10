@@ -13,7 +13,9 @@ Invoke the `design-etl-architecture` skill and follow it exactly:
    `<WS>/requirements/`. If requirements are missing, stop and tell me to run
    `/gather-requirements`.
 3. Settle the load-bearing choices (ETL vs ELT, batch vs streaming, zone model,
-   orchestration, storage/formats, idempotency), each traced to a requirement.
+   orchestration, storage/formats, idempotency, the transformation framework &
+   warehouse portability, the IaC tool & CI/CD promotion flow), each traced to a
+   requirement.
 4. Write to `<WS>/design/`: `architecture-overview.md`, `architecture-diagram.md`,
    `data-flow-diagram.md`, `data-entity-diagram.md`, `component-design.md`,
    `transformation-design.md` (the dbt project blueprint), `deployment-and-iac.md`

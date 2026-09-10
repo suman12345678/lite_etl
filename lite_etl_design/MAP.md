@@ -62,7 +62,10 @@ writes into the **active project workspace**, whose path is stored in one line i
         │ /build-components    │   reads: <workspace>/design/*
         │                     │   writes: <workspace>/build/  (build-plan, per-component buildsheets,
         │                     │           dbt-project-scaffold, fixtures-catalog, local-dev)
-        └──────────┬──────────┘   scaffolds: <workspace>/build/repo/  (dbt stubs, extractor stubs, unit tests)
+        └──────────┬──────────┘   scaffolds: <workspace>/build/repo/  (stubs + a runnable
+                   │                        walking-skeleton slice: demo/, DEMO.md, `make demo`)
+                   ▼
+        ( implement the stub component bodies against the buildsheets until `make test` is green )
                    ▼
         ┌─────────────────────┐   skill: assemble-etl-pipeline   (helper: /validate-config)
         │ /assemble-pipeline   │   reads: <workspace>/design/* + build/*

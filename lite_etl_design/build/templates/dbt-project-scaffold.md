@@ -34,6 +34,12 @@ build/repo/dbt/
 | `dim_<x>` | `models/marts/...` | data-entity-diagram; 02 load pattern | table | unique key, relationships |
 | `fct_<y>` | `models/marts/...` | data-entity-diagram (grain); 02 | incremental (`<strategy>`) | not_null FKs, `dbt_expectations` ranges |
 | `<entity>_snapshot` | `snapshots/...` | transformation-design s.5; 03 historisation | snapshot | valid_to continuity |
+
+Snapshot stubs must still be **valid**: `strategy='timestamp'` needs a real
+`updated_at` column in the `select`; `strategy='check'` needs `check_cols=[...]`
+or `'all'` and no `updated_at`. If the stub `select` cannot yet expose the
+timestamp column, exclude `path:snapshots` from the `--target ci` build until the
+body is real, and say so here.
 | `<reference>.csv` | `seeds/...` | 03 reference data | seed | accepted_values |
 | singular test `<name>` | `tests/...` | 05 recon check / 08 PII-leak | - | tag `recon` / `security` |
 
@@ -52,7 +58,27 @@ build/repo/dbt/
 - `dbt build --select <pipeline selector> --target dev` - per-pipeline (Phase 4).
 - `dbt test --select tag:recon` - the reconciliation gate step.
 
+## CI source shim - how fixtures become `bronze.*`
+
+`dbt build --target ci` needs the `bronze.<src>__<obj>` relations its `source()`s
+point at to *exist* in the DuckDB file. Scaffold **one** of these (state which):
+
+- **Shared loader (preferred):** a `demo/load.py::load_fixtures_to_duckdb(db_path)`
+  that reads `tests/fixtures/<src>/*` and `CREATE`s `bronze.<src>__<obj>` (with
+  `_run_id` / `_source_file` / `_extracted_at` / `_ingest_date` columns).
+  `tests/conftest.py` calls it before the dbt run; the walking-skeleton demo
+  calls the same function. One loader, one bronze shape.
+- **Seeds-as-sources:** put the fixture rows in `seeds/_ci/<src>__<obj>.csv` and
+  override `generate_schema_name` so the `ci` target lands them in a `bronze`
+  schema; `sources.yml` resolves to them only under `--target ci`.
+- **`read_*` macro:** a `bronze()` macro that returns `read_parquet('fixtures/...')`
+  when `target.name == 'ci'` and `source(...)` otherwise.
+
+`tests/conftest.py` must be **real** (not `raise NotImplementedError`): a
+`bronze_db` / `settings` fixture that produces a loaded DuckDB file.
+
 ## Fixtures for `--target ci`
 
 _List the seed CSVs / fixture sources that stand in for `bronze` in local
-tests; cross-reference `fixtures-catalog.md`._
+tests; cross-reference `fixtures-catalog.md`. The walking-skeleton source's
+fixtures must be real content (not placeholders)._

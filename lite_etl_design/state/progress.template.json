@@ -3,6 +3,7 @@
   "workspace_path": null,
   "created": null,
   "updated": null,
+  "_active_phase_values": "1_requirements | 2_architecture | 3_build_and_test | 4_pipeline_and_git | 5_full_testing_and_hardening | complete",
   "active_phase": "1_requirements",
   "phases": {
     "1_requirements": {
@@ -22,7 +23,7 @@
       "status": "not_started",
       "owner_skill": "build-etl-components",
       "deliverables": [],
-      "notes": "Reads phase 2 design, writes <workspace>/build/*.md (build plan + per-component buildsheets + fixtures catalog + local-dev guide) and scaffolds the starter repo tree under <workspace>/build/repo/ (dbt project, extractor stubs, unit tests). Config-driven, one component at a time."
+      "notes": "Reads phase 2 design, writes <workspace>/build/*.md (build plan + per-component buildsheets + fixtures catalog + local-dev guide) and scaffolds the starter repo under <workspace>/build/repo/: stubs for every component EXCEPT a runnable walking-skeleton slice (demo/, DEMO.md - one source end to end on DuckDB: load -> DQ quarantine -> reconciliation gate -> publish). Then the stub bodies are implemented against the buildsheets before a real pipeline run."
     },
     "4_pipeline_and_git": {
       "status": "not_started",

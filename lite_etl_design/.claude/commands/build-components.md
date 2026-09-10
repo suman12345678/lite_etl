@@ -21,11 +21,16 @@ Invoke the `build-etl-components` skill and follow it exactly:
 5. Scaffold the starter repo under `<WS>/build/repo/` - directory tree, dbt
    project with stub models / snapshots / seeds / `_sources.yml`, extractor
    stubs with real signatures, unit-test stubs, tiny synthetic fixtures, a
-   task-runner file. Stubs and `TODO`s only - no business logic, no secrets, no
-   real data.
-6. Walk me through the build order, the tree and the component interfaces;
-   revise on feedback.
-7. Update `<WS>/progress.json` (phase 3 status, deliverables, `active_phase` ->
+   task-runner file. Stubs and `TODO`s only - **except the walking-skeleton
+   slice** (`demo/`, `DEMO.md`, a working `tests/conftest.py`, real fixtures for
+   one source + its bad-row/fixed pair + control totals, `<task> demo` /
+   `demo-fail` targets), which gets real small bodies and must run on DuckDB.
+   See `build/templates/demo-harness.md`.
+6. Run the Step 2.9 self-check (compile / YAML / `dbt parse` / `<task> demo` /
+   `pytest tests/unit/test_demo.py`) and report the result.
+7. Walk me through the build order, the tree, the component interfaces and the
+   demo run; revise on feedback.
+8. Update `<WS>/progress.json` (phase 3 status, deliverables, `active_phase` ->
    `4_pipeline_and_git`).
 
 Optional heavy lifting: run the `component-builder` subagent (pass it `<WS>`) to

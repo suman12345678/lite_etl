@@ -77,11 +77,14 @@
 
 ## Environment topology
 
+- **Canonical environment names (used verbatim by every downstream phase -
+  infra dirs, config files, dbt targets, CI environments):** _e.g. `dev, stg, prd`_
+- **Primary cloud region:** _(state it here; the DR / replica region is separate
+  and must not be reused as primary)_
+
 | Env | Warehouse account / workspace | Catalog / database | Compute | Access |
 |-----|-------------------------------|--------------------|---------|--------|
-| dev | | | | |
-| test / UAT | | | | |
-| prod | | | | |
+| _(row per canonical env name above)_ | | | | |
 
 - **Naming scheme across envs:** (`<env>_` prefix / separate accounts / tags)
 - **Network:** public / PrivateLink / VPC peering per env

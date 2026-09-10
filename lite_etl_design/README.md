@@ -71,7 +71,8 @@ Then:
 | (optional) add material you have | drop files in `projects/sales-dwh/intake/` | the interview reads them first |
 | **Step 1** - gather requirements | `/gather-requirements` | interactive interview -> `projects/sales-dwh/requirements/*.md` |
 | **Step 2** - architecture & diagrams | `/design-architecture` | -> `projects/sales-dwh/design/*.md` (incl. Mermaid diagrams) |
-| **Step 3** - build & test components | `/build-components` | -> `.../build/*.md` + a scaffolded starter repo in `.../build/repo/` |
+| **Step 3** - build & test components | `/build-components` | -> `.../build/*.md` + a scaffolded starter repo in `.../build/repo/`, incl. a **runnable** walking-skeleton slice (`make demo`) |
+| *between 3 and 4* - implement | (you / your team) | fill the stub component bodies against the buildsheets until `make test` is green |
 | **Step 4** - pipeline & Git | `/assemble-pipeline` | -> `.../pipeline/*.md` + `infra/` + orchestrator + CI skeletons in `build/repo/` |
 | **Step 5** - full testing & hardening | `/harden-pipeline` | -> `.../hardening/*.md` (test strategy, DQ matrix, recon fixtures, CI gates, runbook, go-live) |
 | Any time - where am I? | `/etl-design-status` | short status + the one next command |

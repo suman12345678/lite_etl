@@ -10,9 +10,12 @@ design/build is silent, leave a `TODO` with a pointer, never an invented value.
 ## Inputs (the calling skill passes you the workspace path `<WS>`)
 
 - `<WS>/design/` - especially `deployment-and-iac.md`, `pipeline-blueprint.md`,
-  `10-platform-and-deployment.md`, `architecture-overview.md`.
+  `architecture-overview.md`.
+- `<WS>/requirements/10-platform-and-deployment.md` - repo model, **canonical env
+  names**, CI/CD tool, primary region.
 - `<WS>/build/` - `build-plan.md`, the buildsheets, `dbt-project-scaffold.md`;
-  and the existing `<WS>/build/repo/` tree.
+  and the existing `<WS>/build/repo/` tree (incl. `demo/` and
+  `dbt/profiles/profiles.yml`).
 - Harness `pipeline/templates/*.md`.
 
 ## Output
@@ -21,12 +24,17 @@ design/build is silent, leave a `TODO` with a pointer, never an invented value.
   `iac-plan.md`, `cicd-plan.md`, `git-workflow.md`, `environments-and-config.md`,
   `README.md`.
 - Scaffold inside `<WS>/build/repo/`: `infra/modules/*/{main,variables,outputs}.tf`
-  and `infra/envs/{dev,test,prod}/{backend,main}.tf` + `<env>.tfvars`; the
-  orchestrator project (one file per pipeline - tasks named, edges wired, retries
-  set, the reconciliation gate as a short-circuit; `resources`, `schedules`,
-  `sensors`, `backfill` stubs); `.github/workflows/{pr,main,promote}.yml` (or the
-  chosen CI); `.pre-commit-config.yaml`, `CODEOWNERS`, `config/{defaults,dev,
-  test,prod}.yml`.
+  and `infra/envs/<env>/{backend,main}.tf` + `<env>.tfvars` - **one dir per
+  canonical env name** (not a literal `dev/test/prod`), region consistent with
+  `requirements/02`; the orchestrator project as `<project>_dagster/` /
+  `dags/` / `flows/` (**never a bare `dagster/`**) - one file per pipeline, tasks
+  named, edges wired, retries set, the reconciliation gate as a short-circuit or
+  a blocking check **bound to a concrete asset key**; framework-native resource
+  types (e.g. `DbtCliResource`); `resources`, `schedules`, `sensors`, `backfill`
+  stubs; `.github/workflows/{pr,main,promote}.yml` (env-var names identical to the
+  orchestrator resources and `dbt/profiles/profiles.yml`); `.pre-commit-config.yaml`,
+  `CODEOWNERS`, one `config/<env>.yml` per env + `config/defaults.yml`, and
+  `dbt/profiles/profiles.yml` targets for every env the promote workflow builds.
 
 ## Method
 

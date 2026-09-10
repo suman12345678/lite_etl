@@ -16,7 +16,10 @@ This skill plans and specifies; it does not run tests, deploy, or go live.
    absent, tell the user to run `/etl-new-project` and stop.
 2. Read `<WS>/progress.json`. If `phases.4_pipeline_and_git.status` is not
    `complete` (or `in_progress` with real content), stop and tell the user to run
-   `/assemble-pipeline` first.
+   `/assemble-pipeline` first. Confirm `<WS>/build/repo/infra/` and the
+   orchestrator package actually exist; if not, stop. Read any `/validate-config`
+   result in `history` - every open GAP it found must end up as a row in
+   `security-review.md` or `go-live-checklist.md`.
 3. Read `<WS>/requirements/` (especially `04`, `05`, `07`, `08`, `09`),
    `<WS>/design/`, `<WS>/build/`, `<WS>/pipeline/`. List `<WS>/build/repo/`.
 4. Skim the harness `hardening/templates/`.
@@ -58,8 +61,22 @@ Write to `<WS>/hardening/`, from the matching harness templates:
 | `go-live-checklist.md` | Readiness items, the drills, cutover steps, the go-live rollback plan, sign-offs. |
 | `README.md` | Index + one-line status + date. |
 
+`test-strategy.md` must open with an honest **"Executable state today"** line -
+what actually runs (the walking-skeleton demo + `test_demo.py`) vs. what is still
+stub - and the shortest path to a first green end-to-end run. `security-review.md`
+must fold in every `/validate-config` GAP. `dq-behaviour-matrix.md` must have a
+row for every rule in `04`; `reconciliation-fixtures.md` a PASS/FAIL/boundary set
+for every check in `05`.
+
 You may run the `hardening-planner` subagent for the bulk drafting: pass it
 `<WS>`. Review before closing out.
+
+## Step 2.9 - Self-check (do not skip)
+
+Confirm all 10 deliverables exist and are non-empty; every DQ matrix row cites an
+`04` rule id; every reconciliation fixture cites an `05` check; every alert row
+maps to a `07`/`09` item; every `/validate-config` GAP appears as a finding or a
+checklist item. Fix before Step 3.
 
 ## Step 3 - Review with the user
 

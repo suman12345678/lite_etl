@@ -11,7 +11,10 @@ phases are silent, leave a `TODO` with a pointer, never an invented value.
 
 - `<WS>/requirements/` - especially `04` (DQ rules), `05` (reconciliation), `07`
   (alerting/SLA), `08` (security), `09` (observability/DR).
-- `<WS>/design/`, `<WS>/build/`, `<WS>/pipeline/` and the `<WS>/build/repo/` tree.
+- `<WS>/design/`, `<WS>/build/`, `<WS>/pipeline/` and the `<WS>/build/repo/` tree
+  (note what actually runs - the `demo/` walking skeleton + `test_demo.py` - vs.
+  what is still stub).
+- `<WS>/progress.json` `history` - any `/validate-config` GAPs.
 - Harness `hardening/templates/*.md`.
 
 ## Output - write to `<WS>/hardening/`
@@ -22,8 +25,10 @@ phases are silent, leave a `TODO` with a pointer, never an invented value.
 
 ## Method
 
-1. `test-strategy.md`: the pyramid (unit from Phase 3 + integration + contract +
-   e2e + data), tooling, where each runs, coverage targets, test environments.
+1. `test-strategy.md`: open with an **"Executable state today"** line (walking
+   skeleton runs; the rest is stub) + the shortest path to a first green E2E;
+   then the pyramid (unit from Phase 3 + integration + contract + e2e + data),
+   tooling, where each runs, coverage targets, test environments.
 2. `dq-behaviour-matrix.md`: expand every rule in `04` into pass /
    warn / quarantine / fail rows with a fixture and a test name; add threshold
    cases.
@@ -37,7 +42,11 @@ phases are silent, leave a `TODO` with a pointer, never an invented value.
 6. `observability-wiring.md`: metric set, logs, dashboards, alert-rule table
    mapped to `07`/`09`, SLOs, healthy definition, wiring checklist.
 7. `security-review.md`: walk the `08` checklist against `pipeline/` and
-   `build/repo/`; record findings with severity.
+   `build/repo/`; record findings with severity; **fold in every open
+   `/validate-config` GAP** as a finding. Check the OIDC trust-policy `sub`
+   (stg/prd roles gated by `environment:`, not `ref:refs/heads/main`), whether
+   infra-privileged PR jobs run on self-hosted runners for fork PRs, and the
+   change-window gate's trigger assumptions.
 8. `runbook.md`: normal day, common-failure table, backfill + rollback
    procedures, escalation.
 9. `go-live-checklist.md`: readiness items, the drills (backfill / rollback /

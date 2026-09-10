@@ -7,6 +7,11 @@
 
 - **Location:** `build/repo/tests/fixtures/`
 - **Golden outputs:** `build/repo/tests/golden/` (expected results to diff against)
+- **Real vs placeholder:** the walking-skeleton source's `sample`, `bad_rows`,
+  `bad_rows_fixed` and the `recon/control_totals_*` files must have **real
+  content** (the demo runs on them). Other sources may start as a one-line
+  `README` placeholder and get real rows when that component is implemented -
+  mark which is which in the "Represents" column.
 
 ## Per source
 
@@ -26,16 +31,16 @@
 
 | Golden file | For | Notes |
 |-------------|-----|-------|
-| `golden/<entity>.csv` | dbt marts on the `sample` fixtures | regenerate with `<task> golden-update` when logic changes intentionally |
+| `golden/<entity>.csv` | dbt marts / the demo slice on the `sample` fixtures | at least one must be **real content** (the walking-skeleton entity); regenerate with `<task> golden` on an intentional logic change |
 
 ## Reconciliation fixtures (shared with Phase 5)
 
 | Fixture | Scenario | Expected gate |
 |---------|----------|---------------|
-| `recon/pass.*` | counts + control totals align | PASS |
-| `recon/fail_count.*` | landed != source count | FAIL, no publish |
-| `recon/fail_total.*` | control total outside tolerance | FAIL |
-| `recon/boundary.*` | delta exactly at tolerance | documented behaviour |
+| `recon/control_totals_pass.csv` | control totals align with the clean data | PASS |
+| `recon/control_totals_fail.csv` | control total outside tolerance | FAIL, publish blocked |
+| `recon/control_totals_fixed.csv` | the corrected-data control total | PASS after the source fix |
+| `recon/pass.*` / `fail_count.*` / `fail_total.*` / `boundary.*` | full 8-check set (Phase 5) | per `reconciliation-fixtures.md` |
 
 ## Rules
 

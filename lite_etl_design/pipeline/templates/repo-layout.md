@@ -14,11 +14,12 @@
 ```
 <repo>/
   extractors/            # Phase 3 - one module per source
+  demo/                  # Phase 3 - the runnable walking-skeleton slice (DEMO.md)
   dbt/                   # Phase 3 - staging / intermediate / marts / snapshots / seeds / macros / tests
-  <orchestrator>/        # Phase 4 - dags/ or dagster/ or flows/ : pipeline definitions
-  infra/                 # Phase 4 - Terraform modules/ + envs/{dev,test,prod}
+  <orchestrator>/        # Phase 4 - dags/ (Airflow) | <project>_dagster/ | flows/ (Prefect). NEVER a bare dagster/ - it shadows the library
+  infra/                 # Phase 4 - Terraform modules/ + envs/<env> (one dir per canonical env in requirements/10)
   .github/workflows/     # Phase 4 - CI/CD (or .gitlab-ci.yml / azure-pipelines.yml)
-  tests/                 # unit (3) + integration/contract/e2e (5) + fixtures + golden
+  tests/                 # unit (3, incl. real test_demo.py) + integration/contract/e2e (5) + fixtures + golden
   config/                # non-secret config, per-env overlays
   docs/                  # dbt docs build output, runbook (5), ADRs
   .pre-commit-config.yaml

@@ -1,0 +1,31 @@
+# One profile, three warehouses. `ci` is the only one wired for real (DuckDB, no
+# credentials). databricks / snowflake are the prod shapes - fill the TODOs and
+# point Terraform's `engine` variable at the matching target.
+retail_demo:
+  target: ci
+  outputs:
+
+    ci:
+      type: duckdb
+      path: "target/retail_demo_ci.duckdb"
+      threads: 4
+
+    databricks:
+      type: databricks
+      catalog: "{{ env_var('DBT_CATALOG', 'retail_demo') }}"
+      schema: "{{ env_var('DBT_SCHEMA', 'marts') }}"
+      host: "{{ env_var('DBT_DATABRICKS_HOST') }}"          # TODO from infra output
+      http_path: "{{ env_var('DBT_DATABRICKS_HTTP_PATH') }}"  # TODO from infra output
+      token: "{{ env_var('DBT_DATABRICKS_TOKEN') }}"          # TODO secret manager
+      threads: 8
+
+    snowflake:
+      type: snowflake
+      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT') }}"       # TODO from infra output
+      user: "{{ env_var('DBT_SNOWFLAKE_USER') }}"
+      authenticator: externalbrowser                          # TODO SSO / key-pair in prod
+      role: "{{ env_var('DBT_SNOWFLAKE_ROLE', 'RETAIL_DEMO_TRANSFORMER') }}"
+      database: "{{ env_var('DBT_SNOWFLAKE_DATABASE', 'RETAIL_DEMO') }}"
+      warehouse: "{{ env_var('DBT_SNOWFLAKE_WAREHOUSE', 'TRANSFORM_WH') }}"
+      schema: "{{ env_var('DBT_SCHEMA', 'MARTS') }}"
+      threads: 8

@@ -1,0 +1,26 @@
+name: retail_demo
+version: "1.0.0"
+config-version: 2
+profile: retail_demo
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  retail_demo:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
+
+seeds:
+  retail_demo:
+    control_totals:
+      +column_types:
+        expected_net_usd: double
+
+# The transform logic is engine-agnostic. Pick the warehouse in the profile
+# (profiles/profiles.yml) or via the Terraform `engine` variable in ../infra.

@@ -1,0 +1,10 @@
+.venv/
+.local_state/
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+*.duckdb
+__pycache__/
+*.pyc
+.terraform/
+*.tfstate*

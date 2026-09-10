@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: One clean row per order_id, deduped on latest loaded_at.
+    columns:
+      - name: order_id
+        tests: [not_null, unique]
+      - name: currency
+        tests:
+          - accepted_values:
+              values: ["USD", "EUR", "GBP", "INR", "JPY"]
+
+  - name: stg_customers
+    description: Customer master with test rows removed and email replaced by a sha256 hash.
+    columns:
+      - name: customer_id
+        tests: [not_null, unique]
+      - name: email_sha256
+        description: sha256 of the lowercased email. Must never contain '@' (PII guard).
+
+  - name: stg_fx_rates
+    description: Daily FX rate per currency (gaps expected on weekends/holidays).
+    columns:
+      - name: rate_date
+        tests: [not_null]
+      - name: currency
+        tests: [not_null]

@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: Customer dimension. PII stored only as email_sha256.
+    columns:
+      - name: customer_id
+        tests: [not_null, unique]
+      - name: email_sha256
+        tests:
+          # PII guard - mirrors the `no_raw_email_in_marts` rule in rules.yml
+          - dbt_utils.expression_is_true:
+              expression: "not like '%@%'"
+
+  - name: fct_order
+    description: Order fact, one row per order_id, net_usd in USD.
+    columns:
+      - name: order_id
+        tests: [not_null, unique]
+      - name: net_usd
+        description: amount_local * carry-forward FX rate. Non-negative (see rules.yml).
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+      - name: rate_to_usd
+        tests: [not_null]

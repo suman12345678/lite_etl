@@ -1,6 +1,13 @@
 version: 2
 models:
   - name: stg_fx__rate
+    description: "FX rates: units of `currency` per 1 USD."
     columns:
-      - name: rate_id      # TODO real key
-        tests: [not_null, unique]
+      - name: currency
+        data_tests: [not_null, unique]
+      - name: rate_per_usd
+        data_tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              strictly: true

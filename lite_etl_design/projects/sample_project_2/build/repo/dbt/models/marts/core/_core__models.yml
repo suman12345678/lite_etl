@@ -1,26 +1,34 @@
 version: 2
 models:
   - name: dim_customer
-    description: "TODO - from requirements/03 glossary"
+    description: "One row per customer. Hashed email + non-identifying attrs only; no
+      raw email/phone/name in gold (ADR-006). The leak check is tests/assert_no_pii_in_gold.sql."
     columns:
-      - name: customer_sk   # TODO real key/tests per requirements/04
-  - name: dim_product
-    description: "TODO - from requirements/03 glossary"
-    columns:
-      - name: customer_sk   # TODO real key/tests per requirements/04
-  - name: dim_store
-    description: "TODO - from requirements/03 glossary"
-    columns:
-      - name: customer_sk   # TODO real key/tests per requirements/04
-  - name: dim_account
-    description: "TODO - from requirements/03 glossary"
-    columns:
-      - name: customer_sk   # TODO real key/tests per requirements/04
+      - name: customer_sk
+        data_tests: [not_null, unique]
+      - name: customer_id
+        data_tests: [not_null]
+      - name: email_hash
+        data_tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^[a-f0-9]{64}$"
+
   - name: dim_fx_rate
-    description: "TODO - from requirements/03 glossary"
+    description: "One row per (currency, rate_date). Units of currency per USD."
     columns:
-      - name: customer_sk   # TODO real key/tests per requirements/04
+      - name: currency
+        data_tests: [not_null]
+      - name: rate_per_usd
+        data_tests: [not_null]
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [rate_date, currency]
+
+  - name: dim_product
+    description: "TODO - not in the walking-skeleton slice."
+  - name: dim_store
+    description: "TODO - not in the walking-skeleton slice."
+  - name: dim_account
+    description: "TODO - not in the walking-skeleton slice."
   - name: dim_date
-    description: "TODO - from requirements/03 glossary"
-    columns:
-      - name: customer_sk   # TODO real key/tests per requirements/04
+    description: "TODO - not in the walking-skeleton slice."

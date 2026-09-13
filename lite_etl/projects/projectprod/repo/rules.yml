@@ -1,0 +1,48 @@
+# Data quality + reconciliation. One place. Run by demo/rules.py locally; by dbt
+# tests (dbt/tests/) + the publish gate in prod. Each `expect` is SQL; true = pass.
+#
+# on_fail:  warn = log only  |  quarantine = row -> reject_<table>, run continues
+#           fail = stop the run now  |  block = no publish, exit non-zero, alert
+
+quality:
+  - id: invoice_id_present
+    table: fct_invoice
+    expect: "invoice_id is not null"
+    on_fail: fail
+
+  - id: amount_usd_non_negative
+    table: fct_invoice
+    expect: "amount_usd >= 0"
+    on_fail: quarantine
+
+  - id: known_status
+    table: fct_invoice
+    expect: "status in ('draft', 'open', 'paid', 'void', 'uncollectible')"
+    on_fail: quarantine
+
+  - id: no_raw_email_in_marts          # PII guard
+    table: dim_account
+    expect: "email_sha256 not like '%@%'"
+    on_fail: fail
+
+  - id: plan_code_known
+    table: fct_invoice
+    expect: "plan_code in (select plan_code from dim_plan)"
+    on_fail: warn
+
+reconcile:
+  - id: revenue_vs_finance_gl
+    query: "select coalesce(sum(recognized_revenue_usd), 0) from fct_invoice where invoice_month = (select max(invoice_month) from fct_invoice)"
+    expect: "select expected_value from control_totals where metric = 'recognized_revenue_usd_current_month'"
+    tolerance_pct: 0.5
+    on_fail: block
+
+  - id: mrr_movement_identity
+    # closing MRR == opening MRR + new + expansion - contraction - churn + reactivation.
+    # movement_amount is already signed (negative for contraction/churn), so
+    # sum(movement_amount) == the signed net of that formula; this is the same
+    # identity, computed off mrr_recon (opening_mrr + movement_sum).
+    query: "select closing_mrr from mrr_recon"
+    expect: "select opening_mrr + movement_sum from mrr_recon"
+    tolerance_pct: 0.1
+    on_fail: block

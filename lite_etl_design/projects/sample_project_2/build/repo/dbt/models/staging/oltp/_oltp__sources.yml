@@ -4,10 +4,37 @@ sources:
     schema: bronze
     loaded_at_field: _extracted_at
     freshness:
-      warn_after: {count: 6, period: hour}    # TODO tune per requirements/01 cadence
+      warn_after: {count: 6, period: hour}     # oltp cadence is 4h (requirements/07)
       error_after: {count: 12, period: hour}
     tables:
-      - name: customers   # TODO columns from requirements/01
-      - name: products   # TODO columns from requirements/01
-      - name: orders   # TODO columns from requirements/01
-      - name: order_lines   # TODO columns from requirements/01
+      - name: customers
+        identifier: oltp__customers            # landed as bronze.oltp__<obj> (component-design.md)
+        columns:
+          - name: customer_id
+            data_tests: [not_null]
+          - name: email
+          - name: country
+          - name: updated_at
+          - name: is_deleted
+      - name: products
+        identifier: oltp__products
+      - name: orders
+        identifier: oltp__orders
+        columns:
+          - name: order_id
+            data_tests: [not_null]
+          - name: customer_id
+          - name: currency
+          - name: net_amount
+          - name: is_return
+          - name: order_date
+          - name: updated_at
+          - name: is_deleted
+      - name: order_lines
+        identifier: oltp__order_lines
+        columns:
+          - name: order_id
+          - name: line_no
+          - name: product_id
+          - name: quantity
+          - name: net_amount

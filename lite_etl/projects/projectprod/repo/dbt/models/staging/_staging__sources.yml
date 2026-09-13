@@ -1,0 +1,39 @@
+version: 2
+
+sources:
+  - name: raw
+    description: >
+      Landed source data, written by extract/billing.py, extract/crm.py,
+      extract/ref.py into the `raw` schema/catalog of the chosen engine. In the
+      local demo these are the raw_* tables built by demo/load.py (flat SQLite
+      namespace instead of a schema, same logical layer).
+    schema: "{{ env_var('RAW_SCHEMA', 'raw') }}"
+    tables:
+      - name: billing_invoices
+        description: >
+          One row per invoice as sent by the billing API (Sources: billing.invoices).
+          Webhook retries re-send the same invoice_id with a newer updated_at.
+        loaded_at_field: updated_at
+        columns:
+          - name: invoice_id
+            tests: [not_null]
+
+      - name: billing_subscriptions
+        description: >
+          One row per subscription (Sources: billing.subscriptions); mid-period
+          plan changes appear as a new subscription row; canceled_at can be backdated.
+
+      - name: crm_accounts
+        description: >
+          Daily full CRM snapshot (Sources: crm.accounts). Contains PII
+          (billing_email, company_name) and merged-account pointers (merged_into).
+
+      - name: ref_plans
+        description: >
+          Plan catalogue, hand-maintained CSV (Sources: ref.plans). Plan codes
+          are occasionally retired (is_retired).
+
+      - name: ref_fx_rates
+        description: >
+          FX rate per currency per day (Sources: ref.fx_rates). Weekend/holiday
+          gaps are expected -- carry-forward happens downstream, not in the source.

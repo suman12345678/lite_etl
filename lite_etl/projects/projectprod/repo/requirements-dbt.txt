@@ -1,0 +1,6 @@
+# Only needed to run the full dbt model set on DuckDB (make dbt-ci). Not
+# required for `python -m demo.run`. Add dbt-databricks / dbt-snowflake
+# alongside this when the prod engine (spec.md Open questions) is decided.
+-r requirements.txt
+dbt-duckdb>=1.7,<2.0
+duckdb>=0.10

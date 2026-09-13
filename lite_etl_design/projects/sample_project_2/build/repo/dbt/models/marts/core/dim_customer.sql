@@ -1,6 +1,12 @@
 -- dim_customer
--- Implements: data-entity-diagram.md (grain + keys); requirements/02 load pattern
-{{ config(materialized='table', unique_key='customer_sk') }}
+-- Implements: data-entity-diagram.md (customer dim); ADR-006 - gold carries only
+-- the hashed email + non-identifying attrs, real PII lives in gold_pii.dim_customer_pii.
+{{ config(materialized='table', unique_key='customer_sk', tags=['slice']) }}
 
--- TODO: build from int_* / snapshots; carry source_run_id + dbt_model_sha
-select 1 as _todo
+select
+    {{ surrogate_key(['customer_id']) }} as customer_sk,
+    customer_id,
+    email_hash,
+    country,
+    _run_id as source_run_id
+from {{ ref('stg_oltp__customers') }}

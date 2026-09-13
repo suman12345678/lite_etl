@@ -12,6 +12,8 @@ test-paths: ["tests"]
 vars:
   business_date: "1970-01-01"   # overridden by --vars at run time
   run_id: "local"
+  pii_salt: "demo-salt"                 # prod: injected from secret-scope://northwind/<env>/pii#salt
+  recon_tolerance_pct: 0.5             # recon.tolerance_pct from config/defaults.yml
 
 models:
   northwind:

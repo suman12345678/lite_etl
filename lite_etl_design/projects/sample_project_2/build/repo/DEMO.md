@@ -1,8 +1,9 @@
 # Runnable demo — `northwind_daily` walking skeleton
 
-A **real, runnable** slice of the pipeline that needs no cloud, no Databricks, no
-dbt and no Dagster — just Python + DuckDB. It exists so you can *show* the three
-things this project is about:
+A **real, runnable** slice of the pipeline on DuckDB — no cloud, no Databricks, no
+Dagster. Two ways to run it: `make demo` (pure Python + DuckDB, zero extra deps)
+and `make dbt-ci` (the same slice as real dbt models). It exists so you can *show*
+the three things this project is about:
 
 1. **data load** — synthetic fixtures land as `bronze.*`
 2. **data quality + correction** — the rule `gmv >= 0 unless is_return`
@@ -165,16 +166,41 @@ build, so the SQL lifts into `dbt/models/**` almost verbatim. See the mapping ta
 | `tests/fixtures/recon/control_totals_{pass,fail,fixed}.csv` | the reconciliation source-of-truth totals |
 | `tests/unit/test_demo.py` | 7 real tests over the slice (the buildsheet stub tests are still `skip`) |
 
+## The same slice, as real dbt models
+
+The `demo/sql/*.sql` logic is now also implemented as proper **dbt models** —
+tagged `slice` — so you can run it through dbt on DuckDB exactly as production
+runs it on Databricks:
+
+```bash
+make dbt-ci            # loads fixtures as bronze.* -> dbt deps -> dbt build --select tag:slice --target ci
+```
+
+| dbt object | file |
+|------------|------|
+| sources | `dbt/models/staging/oltp/_oltp__sources.yml`, `.../fx/_fx__sources.yml` (`bronze.oltp__*`, `bronze.fx__rate`) |
+| staging | `stg_oltp__customers` (hashes email, drops soft-deletes), `stg_oltp__orders`, `stg_oltp__order_lines`, `stg_fx__rate` |
+| intermediate | `int_sales__orders_usd` (currency → USD via the `to_usd` macro) |
+| marts | `dim_fx_rate`, `dim_customer` (hashed email only), `fct_order`, `fct_order_line` (both `incremental`+`merge`), `reject__fct_order` (the DQ03 quarantine) |
+| seeds | `control_totals.csv` (reconciliation source-of-truth), `currency_list.csv` |
+| generic tests | `not_null` / `unique` / `relationships` + `dbt_expectations` regex on `email_hash` + a `min_value=0` guard on `fct_order.net_amount_usd where is_return=false` (DQ03) |
+| singular recon tests (`tag:recon`) | `recon_row_counts`, `recon_gmv_control_total` (uses `var('recon_tolerance_pct')`), `assert_order_equals_lines`, `assert_no_pii_in_gold` |
+
+`make demo` (Python/DuckDB) and `make dbt-ci` (dbt/DuckDB) produce the **same
+`gold.fct_order`** from the same fixtures — one is the zero-dependency
+walking-skeleton, the other is the real transformation code.
+
 ## How this maps to the real pipeline
 
 | Demo | Production |
 |------|-----------|
 | `demo/load.py` | the 6 `extractors/` + `landing` writing Delta `bronze.*` |
-| `demo/sql/*.sql` | `dbt/models/staging` + `intermediate` + `marts` on Databricks |
-| `reject__fct_order` | `silver` reject tables + the Elementary DQ report |
-| `demo/checks.py` + `run.py` gate | `recon/gate.py` + the **blocking** Dagster `@asset_check` |
+| `demo/sql/*.sql` **and** the `tag:slice` dbt models | the full `dbt/models/**` on Databricks (`dbt-databricks`) |
+| `reject__fct_order` (demo table / dbt model) | `silver` reject tables + the Elementary DQ report |
+| `demo/checks.py` + `run.py` gate / the `tag:recon` singular tests | `recon/gate.py` + the **blocking** Dagster `@asset_check` |
 | `gold.fct_order` + `_SUCCESS` | `publish` / `catalog_register` assets, watermark advance |
 
-Everything else in `build/repo/` (the `extractors/`, `recon/`, `publish/`
-bodies, the dbt project, `northwind_dagster/`, `infra/`) is still Phase-3/4
-scaffold — implement it against the buildsheets in `../build/`.
+The other ~29 dbt models (shopify / pos / ga4 / salesforce, snapshots, the other
+marts) and the `extractors/`, `recon/`, `publish/`, `northwind_dagster/`, `infra/`
+bodies are still scaffold — implement them against the buildsheets in `../build/`,
+following the `tag:slice` models as the worked example.

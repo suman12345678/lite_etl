@@ -1,6 +1,14 @@
 version: 2
 seeds:
   - name: currency_list
-    columns: [{name: currency, tests: [not_null, unique]}]
+    columns: [{name: currency, data_tests: [not_null, unique]}]
   - name: channel_map
-    columns: [{name: channel, tests: [{accepted_values: {values: [web, store, wholesale]}}]}]
+    columns: [{name: channel, data_tests: [{accepted_values: {values: [web, store, wholesale]}}]}]
+  - name: control_totals
+    description: "Reconciliation source-of-truth GMV per channel (recon check R2). In prod
+      this is loaded from the Shopify payout export / POS totals.csv / SFDC closed-won."
+    columns:
+      - name: channel
+        data_tests: [not_null, unique]
+      - name: expected_gmv_usd
+        data_tests: [not_null]

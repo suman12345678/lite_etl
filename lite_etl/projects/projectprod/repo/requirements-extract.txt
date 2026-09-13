@@ -1,0 +1,14 @@
+# extract/*.py + publish/gate.py. `requests`/`psycopg2-binary`/`boto3` cover
+# the CI unit tests (extract/fixtures/, tests/) with ENGINE=duckdb -- no live
+# credentials needed. Add databricks-sql-connector / snowflake-connector-python
+# only on a host that runs extract/* or publish/gate.py against those engines.
+-r requirements.txt
+duckdb>=0.10
+requests>=2.31
+psycopg2-binary>=2.9
+boto3>=1.34
+
+# Needed only when ENGINE=databricks:
+#   databricks-sql-connector>=3.0
+# Needed only when ENGINE=snowflake:
+#   snowflake-connector-python>=3.7

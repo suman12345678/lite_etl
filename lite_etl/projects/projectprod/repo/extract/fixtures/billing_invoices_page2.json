@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "id": "INV00103",
+      "account_id": "A003",
+      "plan_code": "BASIC",
+      "invoice_date": "2026-07-05",
+      "currency": "gbp",
+      "amount_local": "39.37",
+      "status": "paid",
+      "updated_at": "2026-07-18T22:00:00Z"
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null
+}

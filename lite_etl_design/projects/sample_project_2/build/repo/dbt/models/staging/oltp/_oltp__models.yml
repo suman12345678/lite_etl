@@ -1,18 +1,41 @@
 version: 2
 models:
   - name: stg_oltp__customers
+    description: "OLTP customers, soft-deletes removed, email hashed (silver PII rule)."
     columns:
-      - name: customers_id      # TODO real key
-        tests: [not_null, unique]
-  - name: stg_oltp__products
-    columns:
-      - name: products_id      # TODO real key
-        tests: [not_null, unique]
+      - name: customer_id
+        data_tests: [not_null, unique]
+      - name: email_hash
+        data_tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^[a-f0-9]{64}$"
+      - name: country
+        data_tests: [not_null]
+
   - name: stg_oltp__orders
+    description: "OLTP orders, soft-deletes removed, currency upper-cased."
     columns:
-      - name: orders_id      # TODO real key
-        tests: [not_null, unique]
+      - name: order_id
+        data_tests: [not_null, unique]
+      - name: currency
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('currency_list')
+              field: currency
+      - name: net_amount
+        data_tests: [not_null]
+
   - name: stg_oltp__order_lines
+    description: "OLTP order lines."
     columns:
-      - name: order_lines_id      # TODO real key
-        tests: [not_null, unique]
+      - name: order_id
+        data_tests: [not_null]
+      - name: line_no
+        data_tests: [not_null]
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [order_id, line_no]
+
+  - name: stg_oltp__products
+    description: "TODO - not in the walking-skeleton slice."

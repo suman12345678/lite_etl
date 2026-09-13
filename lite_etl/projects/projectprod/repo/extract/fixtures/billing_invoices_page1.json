@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "id": "INV00101",
+      "account_id": "A001",
+      "plan_code": "PRO",
+      "invoice_date": "2026-07-05",
+      "currency": "usd",
+      "amount_local": "150.00",
+      "status": "paid",
+      "updated_at": "2026-07-05T09:00:00Z"
+    },
+    {
+      "id": "INV00102",
+      "account_id": "A002",
+      "plan_code": "PRO",
+      "invoice_date": "2026-07-05",
+      "currency": "eur",
+      "amount_local": "138.89",
+      "status": "paid",
+      "updated_at": "2026-07-05T09:00:00Z"
+    }
+  ],
+  "has_more": true,
+  "next_cursor": "INV00102"
+}

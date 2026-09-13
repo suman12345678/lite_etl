@@ -1,22 +1,48 @@
 version: 2
 models:
   - name: fct_order
-    description: "TODO - from requirements/03 glossary"
+    description: "One row per (order_id, channel). Reconciled clean orders only."
     columns:
-      - name: order_id   # TODO real key/tests per requirements/04
+      - name: order_id
+        data_tests: [not_null]
+      - name: customer_sk
+        data_tests: [not_null]
+      - name: channel
+        data_tests:
+          - accepted_values: {values: [direct, web, store, wholesale]}
+      - name: net_amount_usd
+        data_tests:
+          # DQ03 as a guard on the published table: no negative GMV unless it's a return
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "is_return = false"
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [order_id, channel]
+
   - name: fct_order_line
-    description: "TODO - from requirements/03 glossary"
+    description: "One row per (order_id, line_no) for published orders, in USD."
     columns:
-      - name: order_id   # TODO real key/tests per requirements/04
+      - name: order_id
+        data_tests: [not_null]
+      - name: line_no
+        data_tests: [not_null]
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [order_id, line_no]
+
+  - name: reject__fct_order
+    description: "DQ03 quarantine table - orders held back from fct_order. Empty == clean day."
+    columns:
+      - name: reason_code
+        data_tests:
+          - accepted_values: {values: [neg_gmv_non_return]}
+      - name: _dq_rule
+        data_tests: [not_null]
+
   - name: fct_refund
-    description: "TODO - from requirements/03 glossary"
-    columns:
-      - name: order_id   # TODO real key/tests per requirements/04
+    description: "TODO - not in the walking-skeleton slice."
   - name: agg_sales_daily
-    description: "TODO - from requirements/03 glossary"
-    columns:
-      - name: order_id   # TODO real key/tests per requirements/04
+    description: "TODO - not in the walking-skeleton slice."
   - name: agg_customer_monthly
-    description: "TODO - from requirements/03 glossary"
-    columns:
-      - name: order_id   # TODO real key/tests per requirements/04
+    description: "TODO - not in the walking-skeleton slice."

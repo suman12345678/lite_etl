@@ -30,7 +30,9 @@ test-%:
 	pytest tests/unit/test_$*.py
 
 dbt-ci:
-	cd dbt && dbt build --target ci
+	$(PY) -c "from demo.load import load_fixtures_to_duckdb as l; l('.local_state/northwind_ci.duckdb','2026-09-08','ci-run',dataset='good')"
+	cd dbt && dbt deps && dbt build --select tag:slice --target ci
+	# TODO: drop --select tag:slice once every model has a real body
 
 golden:
 	$(PY) tests/regen_golden.py

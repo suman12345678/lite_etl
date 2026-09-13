@@ -1,0 +1,93 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt -r requirements-extract.txt
+      - name: byte-compile every module (catches syntax errors, no TODOs left as code)
+        run: python -m compileall demo extract publish tests -q
+      - name: every YAML parses
+        run: |
+          python - <<'PY'
+          import glob, sys, yaml
+          paths = glob.glob("**/*.yml", recursive=True) + glob.glob("**/*.yaml", recursive=True)
+          paths = [p for p in paths if ".venv" not in p and "dbt_packages" not in p]
+          for p in paths:
+              with open(p) as fh:
+                  yaml.safe_load(fh)
+          print(f"parsed {len(paths)} yaml file(s) OK")
+          PY
+
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+
+      - name: clean run publishes
+        run: python -m demo.run --scenario clean
+
+      - name: bad data blocks the publish (must exit 1)
+        run: |
+          set +e
+          python -m demo.run --scenario fail
+          rc=$?
+          set -e
+          test $rc -eq 1 && echo "OK: demo-fail exited 1"
+
+  extract-unit-tests:
+    runs-on: ubuntu-latest
+    # No live credentials here on purpose -- every test mocks the network/DB call
+    # and reads recorded fixtures from extract/fixtures/.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-extract.txt
+      - run: python -m unittest discover -s tests -v
+
+  dbt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dbt.txt
+      - name: seed a DuckDB raw schema from the demo fixture
+        run: python dbt/seed_ci_raw.py
+      - name: "dbt build --target ci (full model set: staging + intermediate + marts + tests)"
+        working-directory: dbt
+        run: |
+          dbt deps
+          dbt seed --target ci
+          dbt build --target ci
+
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: terraform validate (dev)
+        working-directory: infra/envs/dev
+        run: |
+          terraform init -backend=false
+          terraform validate
+      - name: terraform validate (prod)
+        working-directory: infra/envs/prod
+        run: |
+          terraform init -backend=false
+          terraform validate

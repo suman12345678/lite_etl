@@ -1,0 +1,4 @@
+[
+  ["A007", "Company 7 Ltd", "ap7@corp7.example.com", "US", "corp7.example.com", null],
+  ["A013", "Company 7 (old)", "billing@corp7-old.example.com", "US", "corp7-old.example.com", "A007"]
+]

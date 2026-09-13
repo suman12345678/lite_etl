@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "id": "S002",
+      "account_id": "A001",
+      "plan_code": "PRO",
+      "start_date": "2026-07-01",
+      "end_date": null,
+      "canceled_at": null,
+      "updated_at": "2026-07-01T00:00:00Z"
+    },
+    {
+      "id": "S006",
+      "account_id": "A004",
+      "plan_code": "ENTERPRISE",
+      "start_date": "2026-04-01",
+      "end_date": "2026-06-30",
+      "canceled_at": "2026-06-25",
+      "updated_at": "2026-06-25T00:00:00Z"
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null
+}

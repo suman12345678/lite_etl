@@ -1,0 +1,17 @@
+# projectprod orchestrator (design.md: "Orchestrator: cron, two cadences").
+# Install with `crontab orchestration/crontab.txt` on any host that has this repo
+# checked out, its Python deps installed, and ENGINE + credentials exported as
+# environment variables (via an EnvironmentFile, systemd unit, or your process
+# manager's secrets injection -- never hardcode a value into this file).
+#
+# In AWS this same schedule is expressed as the two EventBridge rules in
+# infra/modules/pipeline/schedule.tf, which run the identical scripts inside an
+# ECS Fargate task instead of a crontab line -- pick whichever fits your host.
+
+# Daily 02:00 UTC: full extract -> dbt build -> rules gate -> publish (Schedule:
+# "daily 02:00, after the FX file and the CRM snapshot land; deadline 04:00").
+0 2 * * * cd /opt/projectprod && ./orchestration/run_daily.sh >> /var/log/projectprod/daily.log 2>&1
+
+# Hourly: land-only, new invoices to raw, no transform/publish (Schedule: "an
+# hourly lightweight run that only lands new invoices to raw").
+0 * * * * cd /opt/projectprod && ./orchestration/run_hourly_land.sh >> /var/log/projectprod/hourly.log 2>&1

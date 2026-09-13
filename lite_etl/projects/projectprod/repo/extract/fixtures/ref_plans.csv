@@ -1,0 +1,5 @@
+plan_code,monthly_price_usd,plan_tier,is_retired
+BASIC,50.00,starter,0
+PRO,150.00,growth,0
+ENTERPRISE,500.00,enterprise,0
+PROMO_2024,0.00,starter,1

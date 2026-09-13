@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: int_subscription_days
+    description: Per subscription x month, days active and days in month (proration input).
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+      - name: overlap_days
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+  - name: int_mrr_by_month
+    description: Account x month MRR spine (grain per Transforms; feeds fct_mrr_movement).
+    columns:
+      - name: account_id
+        tests: [not_null]
+      - name: mrr_usd
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"

@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: dim_account
+    description: Account dimension. PII stored only as email_sha256.
+    columns:
+      - name: account_id
+        tests: [not_null, unique]
+      - name: email_sha256
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "not like '%@%'"   # PII guard - mirrors rules.yml no_raw_email_in_marts
+
+  - name: dim_plan
+    columns:
+      - name: plan_code
+        tests: [not_null, unique]
+
+  - name: fct_invoice
+    description: Invoice fact, one row per invoice_id, amounts in USD.
+    columns:
+      - name: invoice_id
+        tests: [not_null, unique]
+      - name: amount_usd
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"            # mirrors rules.yml amount_usd_non_negative
+      - name: status
+        tests:
+          - accepted_values:
+              values: ["draft", "open", "paid", "void", "uncollectible"]
+      - name: plan_code
+        tests:
+          - relationships:
+              to: ref('dim_plan')
+              field: plan_code
+              config:
+                severity: warn               # mirrors rules.yml plan_code_known (on_fail: warn)
+
+  - name: fct_mrr_movement
+    description: >
+      One row per account_id per month per movement type (new / expansion /
+      contraction / churn / reactivation). See dbt/tests/recon_mrr_identity.sql for the
+      blocking reconciliation (rules.yml: mrr_movement_identity).
+    columns:
+      - name: account_id
+        tests: [not_null]
+      - name: movement_type
+        tests:
+          - accepted_values:
+              values: ["new", "expansion", "contraction", "churn", "reactivation"]

@@ -1,0 +1,33 @@
+# One profile, three warehouses. `ci` is wired for real (DuckDB, no credentials).
+# `databricks` / `snowflake` are the two candidate prod engines from spec.md's
+# Open questions -- point Terraform's `engine` variable (infra/) at whichever is
+# chosen and fill the matching env vars below; no model changes needed either way.
+projectprod:
+  target: ci
+  outputs:
+
+    ci:
+      type: duckdb
+      path: "target/projectprod_ci.duckdb"
+      threads: 4
+
+    databricks:
+      type: databricks
+      catalog: "{{ env_var('DBT_CATALOG', 'projectprod') }}"
+      schema: "{{ env_var('DBT_SCHEMA', 'marts') }}"
+      host: "{{ env_var('DBT_DATABRICKS_HOST') }}"           # from infra output databricks_host
+      http_path: "{{ env_var('DBT_DATABRICKS_HTTP_PATH') }}" # from infra output sql_warehouse_http_path
+      token: "{{ env_var('DBT_DATABRICKS_TOKEN') }}"         # from secrets manager, injected as an env var
+      threads: 8
+
+    snowflake:
+      type: snowflake
+      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT') }}"      # from infra output snowflake_account
+      user: "{{ env_var('DBT_SNOWFLAKE_USER') }}"
+      password: "{{ env_var('DBT_SNOWFLAKE_PASSWORD', '') }}"  # unset when using externalbrowser/key-pair auth
+      authenticator: "{{ env_var('DBT_SNOWFLAKE_AUTHENTICATOR', 'externalbrowser') }}"
+      role: "{{ env_var('DBT_SNOWFLAKE_ROLE', 'PROJECTPROD_TRANSFORMER') }}"
+      database: "{{ env_var('DBT_SNOWFLAKE_DATABASE', 'PROJECTPROD') }}"
+      warehouse: "{{ env_var('DBT_SNOWFLAKE_WAREHOUSE', 'TRANSFORM_WH') }}"
+      schema: "{{ env_var('DBT_SCHEMA', 'MARTS') }}"
+      threads: 8

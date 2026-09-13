@@ -1,0 +1,30 @@
+name: projectprod
+version: "1.0.0"
+config-version: 2
+profile: projectprod
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  projectprod:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
+
+seeds:
+  projectprod:
+    control_totals:
+      +column_types:
+        expected_value: double
+
+# Transform logic is engine-agnostic. Pick the warehouse in profiles/profiles.yml
+# or via the Terraform `engine` variable in ../infra -- every model file here is
+# identical across duckdb / databricks / snowflake except the one dispatched
+# macro (to_sha256).
